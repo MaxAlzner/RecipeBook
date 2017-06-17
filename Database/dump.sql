@@ -5,7 +5,7 @@ INSERT INTO Recipe(RecipeId, UniqueId, `Name`, PrepTime, CookTime, TotalTime, Se
 VALUES
 	(1, UUID(), 'Pecan Pie', 15, 40, 65, 8, 313, 'Aluminum foil can be used to keep food moist, cook it evenly, and make clean-up easier.', 1, NOW());
 
-INSERT INTO Ingredient(RecipeId, `Name`, Unit, Quantity, Section)
+INSERT INTO Ingredient(RecipeId, `Name`, UnitCode, Quantity, Section)
 VALUES
 	(1, 'light brown sugar', 'CUP', 1, NULL),
 	(1, 'white sugar', 'CUP', 0.25, NULL),

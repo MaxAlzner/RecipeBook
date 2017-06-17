@@ -17,11 +17,11 @@ namespace LibRecipeBook
         public int IngredientId { get; set; }
         public int RecipeId { get; set; }
         public string Name { get; set; }
-        public string Unit { get; set; }
+        public string UnitCode { get; set; }
         public decimal Quantity { get; set; }
         public string Section { get; set; }
     
         public virtual Recipe Recipe { get; set; }
-        public virtual Unit Unit1 { get; set; }
+        public virtual Unit Unit { get; set; }
     }
 }

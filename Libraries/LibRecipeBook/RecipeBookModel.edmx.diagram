@@ -5,13 +5,13 @@
     <!-- Diagram content (shape and connector positions) -->
     <edmx:Diagrams>
       <Diagram DiagramId="d1800bb9851744cea44e665149e82891" Name="RecipeBookDiagram">
-        <EntityTypeShape EntityType="RecipeBookModel.Direction" Width="1.5" PointX="3" PointY="6" IsExpanded="true" />
-        <EntityTypeShape EntityType="RecipeBookModel.Ingredient" Width="1.5" PointX="3" PointY="2.5" IsExpanded="true" />
-        <EntityTypeShape EntityType="RecipeBookModel.Recipe" Width="1.5" PointX="0.75" PointY="2" IsExpanded="true" />
-        <EntityTypeShape EntityType="RecipeBookModel.Unit" Width="1.5" PointX="0.75" PointY="7.875" IsExpanded="true" />
-        <AssociationConnector Association="RecipeBookModel.FK_DirectionDirectionDirection_Recipe" ManuallyRouted="false" />
-        <AssociationConnector Association="RecipeBookModel.FK_Ingredient_Recipe" ManuallyRouted="false" />
-        <AssociationConnector Association="RecipeBookModel.FK_Ingredient_Unit" ManuallyRouted="false" />
+        <EntityTypeShape EntityType="RecipeBookModel.Direction" Width="1.5" PointX="3" PointY="6" />
+        <EntityTypeShape EntityType="RecipeBookModel.Ingredient" Width="1.5" PointX="3" PointY="2.5" />
+        <EntityTypeShape EntityType="RecipeBookModel.Recipe" Width="1.5" PointX="0.75" PointY="2" />
+        <EntityTypeShape EntityType="RecipeBookModel.Unit" Width="1.5" PointX="0.75" PointY="7.875" />
+        <AssociationConnector Association="RecipeBookModel.FK_DirectionDirectionDirection_Recipe" />
+        <AssociationConnector Association="RecipeBookModel.FK_Ingredient_Recipe" />
+        <AssociationConnector Association="RecipeBookModel.FK_Ingredient_Unit" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

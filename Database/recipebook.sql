@@ -54,13 +54,13 @@ CREATE TABLE Ingredient
 	IngredientId INT NOT NULL AUTO_INCREMENT,
     RecipeId INT NOT NULL,
     `Name` VARCHAR(256) NOT NULL,
-    Unit VARCHAR(4) NOT NULL,
+    UnitCode VARCHAR(4) NOT NULL,
     Quantity DECIMAL(8,4) NOT NULL,
     Section VARCHAR(64) NULL,
     
     CONSTRAINT PK_Ingredient PRIMARY KEY(IngredientId),
     CONSTRAINT FK_Ingredient_Recipe FOREIGN KEY (RecipeId) REFERENCES Recipe(RecipeId) ON DELETE CASCADE,
-    CONSTRAINT FK_Ingredient_Unit FOREIGN KEY (Unit) REFERENCES Unit(`Code`)
+    CONSTRAINT FK_Ingredient_Unit FOREIGN KEY (UnitCode) REFERENCES Unit(`Code`)
 );
 
 CREATE TABLE Direction

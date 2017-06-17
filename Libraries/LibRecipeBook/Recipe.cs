@@ -23,9 +23,9 @@ namespace LibRecipeBook
         public int RecipeId { get; set; }
         public string UniqueId { get; set; }
         public string Name { get; set; }
-        public Nullable<decimal> PrepTime { get; set; }
-        public Nullable<decimal> CookTime { get; set; }
-        public Nullable<decimal> TotalTime { get; set; }
+        public Nullable<int> PrepTime { get; set; }
+        public Nullable<int> CookTime { get; set; }
+        public Nullable<int> TotalTime { get; set; }
         public Nullable<int> Servings { get; set; }
         public Nullable<int> Calories { get; set; }
         public string Notes { get; set; }
