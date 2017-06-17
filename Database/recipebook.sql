@@ -42,10 +42,11 @@ CREATE TABLE Recipe
     Revision INT NOT NULL,
     CreateDate DATETIME NOT NULL DEFAULT NOW(),
     
-    CONSTRAINT PK_Recipe PRIMARY KEY(RecipeId),
+    CONSTRAINT PK_Recipe PRIMARY KEY (RecipeId),
     CONSTRAINT CHK_TotalTime CHECK (
-		(TotalTime IS NOT NULL AND (PrepTime IS NOT NULL OR CookTime IS NOT NULL)) OR
-		(TotalTime IS NULL AND PrepTime IS NULL AND CookTime IS NULL)
+		((TotalTime IS NOT NULL AND (PrepTime IS NOT NULL OR CookTime IS NOT NULL)) OR
+		(TotalTime IS NULL AND PrepTime IS NULL AND CookTime IS NULL)) AND
+        (TotalTime = (PrepTime + CookTime))
 	)
 );
 
@@ -58,7 +59,7 @@ CREATE TABLE Ingredient
     Quantity DECIMAL(8,4) NOT NULL,
     Section VARCHAR(64) NULL,
     
-    CONSTRAINT PK_Ingredient PRIMARY KEY(IngredientId),
+    CONSTRAINT PK_Ingredient PRIMARY KEY (IngredientId),
     CONSTRAINT FK_Ingredient_Recipe FOREIGN KEY (RecipeId) REFERENCES Recipe(RecipeId) ON DELETE CASCADE,
     CONSTRAINT FK_Ingredient_Unit FOREIGN KEY (UnitCode) REFERENCES Unit(`Code`)
 );
@@ -70,7 +71,7 @@ CREATE TABLE Direction
     Step INT NOT NULL,
     Description VARCHAR(1024) NOT NULL,
     
-    CONSTRAINT PK_Direction PRIMARY KEY(DirectionId),
+    CONSTRAINT PK_Direction PRIMARY KEY (DirectionId),
     CONSTRAINT FK_DirectionDirectionDirection_Recipe FOREIGN KEY (RecipeId) REFERENCES Recipe(RecipeId) ON DELETE CASCADE,
     CONSTRAINT UNQ_RecipeStep UNIQUE KEY (RecipeId, Step)
 );

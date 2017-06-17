@@ -28,12 +28,23 @@
                     <dt>Calories</dt>
                     <dd>@recipe.Calories</dd>
                 </dl>
-                <ol>
-                    @foreach (var ingredient in recipe.Ingredients)
-                    {
-                        <li>(@ingredient.Quantity @ingredient.UnitCode) @ingredient.Name</li>
-                    }
-                </ol>
+                @{
+                    var ingredientGroups = recipe.Ingredients
+                        .GroupBy(q => q.Section);
+                }
+                @foreach (var ingredientGroup in ingredientGroups)
+                {
+                    <fieldset>
+                        <legend class="h5">@ingredientGroup.Key</legend>
+                        <ul>
+                            @foreach (var ingredient in ingredientGroup.ToList())
+                            {
+                                var q = Fractions.Fraction.FromDecimal(ingredient.Quantity);
+                                <li>(@q.ToString("m") @ingredient.Unit.Name) @ingredient.Name</li>
+                            }
+                        </ul>
+                    </fieldset>
+                }
                 <ol>
                     @foreach (var step in recipe.Directions.OrderBy(q => q.Step).ToList())
                     {
