@@ -19,11 +19,12 @@ namespace LibRecipeBook
                 if (q.Denominator == 10000)
                 {
                     var whole = Math.Truncate(this.Quantity);
-                    if ((this.Quantity - whole) == 0.3333m)
+                    var part = this.Quantity - whole;
+                    if (part == 0.3333m)
                     {
                         q = new Fraction(((int)whole * 3) + 1, 3);
                     }
-                    else if ((this.Quantity - whole) == 0.6667m)
+                    else if (part == 0.6667m)
                     {
                         q = new Fraction(((int)whole * 3) + 2, 3);
                     }

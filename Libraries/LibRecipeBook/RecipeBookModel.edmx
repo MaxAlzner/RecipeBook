@@ -47,6 +47,7 @@
           </Key>
           <Property Name="Code" Type="varchar" MaxLength="4" Nullable="false" />
           <Property Name="Name" Type="varchar" MaxLength="64" Nullable="false" />
+          <Property Name="ShortName" Type="varchar" MaxLength="32" Nullable="false" />
         </EntityType>
         <Association Name="FK_DirectionDirectionDirection_Recipe">
           <End Role="Recipe" Type="Self.Recipe" Multiplicity="1">
@@ -114,7 +115,6 @@
           <EntitySet Name="Directions" EntityType="RecipeBookModel.Direction" />
           <EntitySet Name="Ingredients" EntityType="RecipeBookModel.Ingredient" />
           <EntitySet Name="Recipes" EntityType="RecipeBookModel.Recipe" />
-          <EntitySet Name="Units" EntityType="RecipeBookModel.Unit" />
           <AssociationSet Name="FK_DirectionDirectionDirection_Recipe" Association="RecipeBookModel.FK_DirectionDirectionDirection_Recipe">
             <End Role="Recipe" EntitySet="Recipes" />
             <End Role="Direction" EntitySet="Directions" />
@@ -123,6 +123,7 @@
             <End Role="Recipe" EntitySet="Recipes" />
             <End Role="Ingredient" EntitySet="Ingredients" />
           </AssociationSet>
+          <EntitySet Name="Units" EntityType="RecipeBookModel.Unit" />
           <AssociationSet Name="FK_Ingredient_Unit" Association="RecipeBookModel.FK_Ingredient_Unit">
             <End Role="Unit" EntitySet="Units" />
             <End Role="Ingredient" EntitySet="Ingredients" />
@@ -169,14 +170,6 @@
           <NavigationProperty Name="Directions" Relationship="RecipeBookModel.FK_DirectionDirectionDirection_Recipe" FromRole="Recipe" ToRole="Direction" />
           <NavigationProperty Name="Ingredients" Relationship="RecipeBookModel.FK_Ingredient_Recipe" FromRole="Recipe" ToRole="Ingredient" />
         </EntityType>
-        <EntityType Name="Unit">
-          <Key>
-            <PropertyRef Name="Code" />
-          </Key>
-          <Property Name="Code" Type="String" Nullable="false" MaxLength="4" FixedLength="false" Unicode="false" />
-          <Property Name="Name" Type="String" Nullable="false" MaxLength="64" FixedLength="false" Unicode="false" />
-          <NavigationProperty Name="Ingredients" Relationship="RecipeBookModel.FK_Ingredient_Unit" FromRole="Unit" ToRole="Ingredient" />
-        </EntityType>
         <Association Name="FK_DirectionDirectionDirection_Recipe">
           <End Type="RecipeBookModel.Recipe" Role="Recipe" Multiplicity="1">
             <OnDelete Action="Cascade" />
@@ -205,6 +198,15 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <EntityType Name="Unit">
+          <Key>
+            <PropertyRef Name="Code" />
+          </Key>
+          <Property Name="Code" Type="String" Nullable="false" MaxLength="4" FixedLength="false" Unicode="false" />
+          <Property Name="Name" Type="String" Nullable="false" MaxLength="64" FixedLength="false" Unicode="false" />
+          <Property Name="ShortName" Type="String" Nullable="false" MaxLength="32" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="Ingredients" Relationship="RecipeBookModel.FK_Ingredient_Unit" FromRole="Unit" ToRole="Ingredient" />
+        </EntityType>
         <Association Name="FK_Ingredient_Unit">
           <End Type="RecipeBookModel.Unit" Role="Unit" Multiplicity="1" />
           <End Type="RecipeBookModel.Ingredient" Role="Ingredient" Multiplicity="*" />
@@ -265,6 +267,7 @@
           <EntitySetMapping Name="Units">
             <EntityTypeMapping TypeName="RecipeBookModel.Unit">
               <MappingFragment StoreEntitySet="Unit">
+                <ScalarProperty Name="ShortName" ColumnName="ShortName" />
                 <ScalarProperty Name="Name" ColumnName="Name" />
                 <ScalarProperty Name="Code" ColumnName="Code" />
               </MappingFragment>

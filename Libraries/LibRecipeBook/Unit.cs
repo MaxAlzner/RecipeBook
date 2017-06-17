@@ -21,6 +21,7 @@ namespace LibRecipeBook
     
         public string Code { get; set; }
         public string Name { get; set; }
+        public string ShortName { get; set; }
     
         public virtual ICollection<Ingredient> Ingredients { get; set; }
     }

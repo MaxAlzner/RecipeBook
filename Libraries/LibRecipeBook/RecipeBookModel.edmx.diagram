@@ -8,9 +8,9 @@
         <EntityTypeShape EntityType="RecipeBookModel.Direction" Width="1.5" PointX="3" PointY="6" />
         <EntityTypeShape EntityType="RecipeBookModel.Ingredient" Width="1.5" PointX="3" PointY="2.5" />
         <EntityTypeShape EntityType="RecipeBookModel.Recipe" Width="1.5" PointX="0.75" PointY="2" />
-        <EntityTypeShape EntityType="RecipeBookModel.Unit" Width="1.5" PointX="0.75" PointY="7.875" />
         <AssociationConnector Association="RecipeBookModel.FK_DirectionDirectionDirection_Recipe" />
         <AssociationConnector Association="RecipeBookModel.FK_Ingredient_Recipe" />
+        <EntityTypeShape EntityType="RecipeBookModel.Unit" Width="1.5" PointX="0.75" PointY="7.875" />
         <AssociationConnector Association="RecipeBookModel.FK_Ingredient_Unit" />
       </Diagram>
     </edmx:Diagrams>
