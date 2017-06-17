@@ -2,7 +2,7 @@
     this.Layout = "~/Views/_Layout.cshtml";
 }
 
-@using (var ctx = new LibRecipeBook.RecipeBookEntities())
+@using (var ctx = new RecipeBookEntities())
 {
     var recipes = ctx.Recipes
         .ToList();
@@ -39,8 +39,14 @@
                         <ul>
                             @foreach (var ingredient in ingredientGroup.ToList())
                             {
-                                var q = Fractions.Fraction.FromDecimal(ingredient.Quantity);
-                                <li>(@q.ToString("m") @ingredient.Unit.Name) @ingredient.Name</li>
+                                if (ingredient.UnitCode == "EA")
+                                {
+                                    <li>@ingredient.QuantityFraction.ToString("m") @ingredient.Name</li>
+                                }
+                                else
+                                {
+                                    <li>(@ingredient.QuantityFraction.ToString("m") @ingredient.Unit.Name) @ingredient.Name</li>
+                                }
                             }
                         </ul>
                     </fieldset>

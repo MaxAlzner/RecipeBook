@@ -73,6 +73,7 @@
     <Compile Include="Ingredient.cs">
       <DependentUpon>RecipeBookModel.tt</DependentUpon>
     </Compile>
+    <Compile Include="Ingredient.partial.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Recipe.cs">
       <DependentUpon>RecipeBookModel.tt</DependentUpon>
