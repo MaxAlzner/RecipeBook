@@ -17,6 +17,7 @@ CREATE TABLE Unit
 
 INSERT INTO Unit(`Code`, `Name`)
 VALUES
+	('EA', 'Each'),
     ('ML', 'Millilitre'),
     ('L', 'Litre'),
 	('CUP', 'US Cup'),
@@ -32,9 +33,9 @@ CREATE TABLE Recipe
 	RecipeId INT NOT NULL AUTO_INCREMENT,
     UniqueId VARCHAR(38) NOT NULL,
     `Name` VARCHAR(256) NOT NULL,
-    PrepTime DECIMAL(8, 2) NULL,
-    CookTime DECIMAL(8, 2) NULL,
-    TotalTime DECIMAL(8, 2) NULL,
+    PrepTime INT NULL,
+    CookTime INT NULL,
+    TotalTime INT NULL,
     Servings INT NULL,
     Calories INT NULL,
     Notes VARCHAR(1024) NULL,
@@ -55,7 +56,7 @@ CREATE TABLE Ingredient
     `Name` VARCHAR(256) NOT NULL,
     Unit VARCHAR(4) NOT NULL,
     Quantity DECIMAL(8,4) NOT NULL,
-    Section VARCHAR(64) NOT NULL,
+    Section VARCHAR(64) NULL,
     
     CONSTRAINT PK_Ingredient PRIMARY KEY(IngredientId),
     CONSTRAINT FK_Ingredient_Recipe FOREIGN KEY (RecipeId) REFERENCES Recipe(RecipeId) ON DELETE CASCADE,
