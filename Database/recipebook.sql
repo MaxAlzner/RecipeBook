@@ -1,6 +1,6 @@
-CREATE DATABASE IF NOT EXISTS `recipebook` /*!40100 DEFAULT CHARACTER SET utf8 */;
+CREATE DATABASE IF NOT EXISTS `RecipeBook` /*!40100 DEFAULT CHARACTER SET utf8 */;
 
-USE `recipebook`;
+USE `RecipeBook`;
 
 DROP TABLE IF EXISTS Ingredient;
 DROP TABLE IF EXISTS Direction;
@@ -12,7 +12,7 @@ CREATE TABLE Unit
 	`Code` VARCHAR(4) NOT NULL,
 	`Name` VARCHAR(64) NOT NULL,
     
-    PRIMARY KEY(`Code`)
+    CONSTRAINT PK_Code PRIMARY KEY(`Code`)
 );
 
 INSERT INTO Unit(`Code`, `Name`)
@@ -41,7 +41,7 @@ CREATE TABLE Recipe
     Revision INT NOT NULL,
     CreateDate DATETIME NOT NULL DEFAULT NOW(),
     
-    PRIMARY KEY(RecipeId),
+    CONSTRAINT PK_Recipe PRIMARY KEY(RecipeId),
     CONSTRAINT CHK_TotalTime CHECK (
 		(TotalTime IS NOT NULL AND (PrepTime IS NOT NULL OR CookTime IS NOT NULL)) OR
 		(TotalTime IS NULL AND PrepTime IS NULL AND CookTime IS NULL)
@@ -57,7 +57,7 @@ CREATE TABLE Ingredient
     Quantity DECIMAL(8,4) NOT NULL,
     Section VARCHAR(64) NOT NULL,
     
-    PRIMARY KEY(IngredientId),
+    CONSTRAINT PK_Ingredient PRIMARY KEY(IngredientId),
     CONSTRAINT FK_Ingredient_Recipe FOREIGN KEY (RecipeId) REFERENCES Recipe(RecipeId) ON DELETE CASCADE,
     CONSTRAINT FK_Ingredient_Unit FOREIGN KEY (Unit) REFERENCES Unit(`Code`)
 );
@@ -69,7 +69,7 @@ CREATE TABLE Direction
     Step INT NOT NULL,
     Description VARCHAR(1024) NOT NULL,
     
-    PRIMARY KEY(DirectionId),
+    CONSTRAINT PK_Direction PRIMARY KEY(DirectionId),
     CONSTRAINT FK_DirectionDirectionDirection_Recipe FOREIGN KEY (RecipeId) REFERENCES Recipe(RecipeId) ON DELETE CASCADE,
     CONSTRAINT UNQ_RecipeStep UNIQUE KEY (RecipeId, Step)
 );
