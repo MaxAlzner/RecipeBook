@@ -2,4 +2,46 @@
     this.Layout = "~/Views/_Layout.cshtml";
 }
 
-
+@using (var ctx = new LibRecipeBook.RecipeBookEntities())
+{
+    var recipes = ctx.Recipes
+        .ToList();
+    foreach (var recipe in recipes)
+    {
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <div class="panel-title">
+                    <span>@recipe.Name</span>
+                    <span class="pull-right">(Rev: @recipe.Revision) @recipe.CreateDate.ToString()</span>
+                </div>
+            </div>
+            <div class="panel-body">
+                <dl class="dl-horizontal">
+                    <dt>Prep</dt>
+                    <dd>@recipe.PrepTime</dd>
+                    <dt>Cook</dt>
+                    <dd>@recipe.CookTime</dd>
+                    <dt>Total</dt>
+                    <dd>@recipe.TotalTime</dd>
+                    <dt>Servings</dt>
+                    <dd>@recipe.Servings</dd>
+                    <dt>Calories</dt>
+                    <dd>@recipe.Calories</dd>
+                </dl>
+                <ol>
+                    @foreach (var ingredient in recipe.Ingredients)
+                    {
+                        <li>(@ingredient.Quantity @ingredient.Unit) @ingredient.Name</li>
+                    }
+                </ol>
+                <ol>
+                    @foreach (var step in recipe.Directions.OrderBy(q => q.Step).ToList())
+                    {
+                        <li>@step.Description</li>
+                    }
+                </ol>
+                <p>@recipe.Notes</p>
+            </div>
+        </div>
+    }
+}
