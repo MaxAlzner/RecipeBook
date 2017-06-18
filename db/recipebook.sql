@@ -16,19 +16,6 @@ CREATE TABLE Unit
     CONSTRAINT PK_Code PRIMARY KEY(`Code`)
 );
 
-INSERT INTO Unit(`Code`, `Name`, ShortName)
-VALUES
-	('EA', 'Each', 'Each'),
-    ('ML', 'Millilitre', 'Millilitre'),
-    ('L', 'Litre', 'Litre'),
-	('CUP', 'US Cup', 'Cup'),
-	('TSP', 'US Teaspoon', 'Teaspoon'),
-	('TBSP', 'US Tablespoon', 'Tablespoon'),
-    ('FLOZ', 'US Fluid Ounce', 'FL Ounce'),
-    ('PT', 'US Fluid Pint', 'Pint'),
-    ('QT', 'US Fluid Quart', 'Quart'),
-    ('GAL', 'US Fluid Gallon', 'Gallon');
-
 CREATE TABLE Recipe
 (
 	RecipeId INT NOT NULL AUTO_INCREMENT,

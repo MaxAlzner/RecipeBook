@@ -1,6 +1,20 @@
 
 USE `RecipeBook`;
 
+INSERT INTO Unit(`Code`, `Name`, ShortName)
+VALUES
+	('EA', 'Each', 'Each'),
+    ('ML', 'Millilitre', 'Millilitre'),
+    ('L', 'Litre', 'Litre'),
+	('CUP', 'US Cup', 'Cup'),
+	('TSP', 'US Teaspoon', 'Teaspoon'),
+	('TBSP', 'US Tablespoon', 'Tablespoon'),
+    ('FLOZ', 'US Fluid Ounce', 'FL Ounce'),
+    ('PT', 'US Fluid Pint', 'Pint'),
+    ('QT', 'US Fluid Quart', 'Quart'),
+    ('GAL', 'US Fluid Gallon', 'Gallon');
+
+
 INSERT INTO Recipe(RecipeId, UniqueId, `Name`, PrepTime, CookTime, TotalTime, Servings, Calories, Notes, Revision, CreateDate)
 VALUES
 	(1, UUID(), 'Pecan Pie', 15, 40, 65, 8, 313, 'Aluminum foil can be used to keep food moist, cook it evenly, and make clean-up easier.', 1, NOW());
