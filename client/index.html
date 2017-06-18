@@ -4,12 +4,72 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Recipe Book</title>
+    <link rel="stylesheet" type="text/css" href="css/bootstrap.min.css" />
+    <link rel="stylesheet" type="text/css" href="css/bootstrap-theme.min.css" />
 </head>
 <body>
     <div class="page-header"></div>
     <div class="container-fluid">
+        {{for Recipes}}
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <div class="panel-title">
+                    <span>{{:Name}}</span>
+                    <span class="pull-right">(Rev: {{:Revision}}) {{:CreateDate}}</span>
+                </div>
+            </div>
+            <div class="panel-body">
+                <dl class="dl-horizontal">
+                    <dt>Prep</dt>
+                    <dd>{{:PrepTime}}</dd>
+                    <dt>Cook</dt>
+                    <dd>{{:CookTime}}</dd>
+                    <dt>Total</dt>
+                    <dd>{{:TotalTime}}</dd>
+                    <dt>Servings</dt>
+                    <dd>{{:Servings}}</dd>
+                    <dt>Calories</dt>
+                    <dd>{{:Calories}}</dd>
+                </dl>
+                <!--@{
+                    var ingredientGroups = recipe.Ingredients
+                        .GroupBy(q => q.Section);
+                }
+                @foreach (var ingredientGroup in ingredientGroups)
+                {
+                    <fieldset>
+                        <legend class="h5">@ingredientGroup.Key</legend>
+                        <ul>
+                            @foreach (var ingredient in ingredientGroup.ToList())
+                            {
+                                if (ingredient.UnitCode == "EA")
+                                {
+                                    <li>@ingredient.QuantityFraction.ToString("m") @ingredient.Name</li>
+                                }
+                                else
+                                {
+                                    <li>(@ingredient.QuantityFraction.ToString("m") @ingredient.Unit.ShortName) @ingredient.Name</li>
+                                }
+                            }
+                        </ul>
+                    </fieldset>
+                }
+                <ol>
+                    @foreach (var step in recipe.Directions.OrderBy(q => q.Step).ToList())
+                    {
+                        <li>@step.Description</li>
+                    }
+                </ol>-->
+                <p>{{:Notes}}</p>
+            </div>
+        </div>
+        {{/for}}
     </div>
     <div id="scripts" hidden>
+        <script type="text/javascript" src="js/jquery-3.2.1.min.js"></script>
+        <script type="text/javascript" src="js/bootstrap.min.js"></script>
+        <script type="text/javascript" src="js/jquery.validate.min.js"></script>
+        <script type="text/javascript" src="js/jquery.validate.unobtrusive.min.js"></script>
     </div>
 </body>
 </html>

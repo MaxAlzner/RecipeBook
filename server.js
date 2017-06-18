@@ -3,6 +3,9 @@ var http = require('http');
 var path = require('path');
 
 var express = require('express');
+var fs = require('fs');
+var jsrender = require('jsrender');
+
 var app = express();
 
 var whitelist = [
@@ -99,39 +102,44 @@ db.Recipe.hasMany(db.Ingredient, { foreignKey: 'RecipeId' });
 db.Recipe.hasMany(db.Direction, { foreignKey: 'RecipeId' });
 db.Ingredient.hasOne(db.Recipe, { foreignKey: 'RecipeId' });
 db.Ingredient.hasOne(db.Unit, { foreignKey: 'Code', targetKey: 'UnitCode' });
-db.Direction.hasOne(dv.Recipe, { foreignKey: 'RecipeId' });
+db.Direction.hasOne(db.Recipe, { foreignKey: 'RecipeId' });
 db.Unit.hasMany(db.Ingredient, { foreignKey: 'UnitCode' });
 
-db.Unit.findAll().done(function (units) {
-    units = units.map((node) => node.dataValues);
-    db.Recipe.findAll({
-        include: [db.Ingredient, db.Direction]
-    }).done(function (result) {
-        var recipes = result.map((node) => node.dataValues);
-        recipes.forEach(function (row) {
-            row.Ingredients = row.Ingredients.map(function (ingredient) {
-                ingredient = ingredient.dataValues;
-                ingredient.Unit = units.find((unit) => unit.Code === ingredient.UnitCode);
-                return ingredient;
-            });
-            row.Directions = row.Directions.map((direction) => direction.dataValues);
-        });
-        // console.log(JSON.stringify(recipes));
-    });
-});
-
 app.get('/', function (request, response) {
-  console.log('SEND', __dirname + '/client/index.html');
-  response
-    .status(200)
-    .set('Content-Type', 'text/html')
-    .sendFile(__dirname + '/client/index.html', function (err) {
-      if (err) {
-          console.log('ERROR', err);
-          response.status(err.statusCode);
-      }
-      
-      response.end();
+    db.Unit.findAll().done(function (units) {
+        units = units.map((node) => node.dataValues);
+        db.Recipe.findAll({
+            include: [db.Ingredient, db.Direction]
+        }).done(function (result) {
+            var recipes = result.map((node) => node.dataValues);
+            recipes.forEach(function (row) {
+                row.Ingredients = row.Ingredients.map(function (ingredient) {
+                    ingredient = ingredient.dataValues;
+                    ingredient.Unit = units.find((unit) => unit.Code === ingredient.UnitCode);
+                    return ingredient;
+                });
+                row.Directions = row.Directions.map((direction) => direction.dataValues);
+            });
+            
+            fs.readFile(__dirname + '/client/index.html', 'utf8', function (err, data) {
+                if (err) {
+                    console.log('ERROR', err);
+                    response.status(err.statusCode);
+                }
+
+                var tmpl = jsrender.templates(data);
+                var html = tmpl.render({
+                    Recipes: recipes
+                });
+                
+                console.log('SEND', __dirname + '/client/index.html');
+                response
+                    .status(200)
+                    .set('Content-Type', 'text/html')
+                    .send(html)
+                    .end();
+            });
+        });
     });
 });
 

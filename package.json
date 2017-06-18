@@ -5,6 +5,7 @@
   "main": "server.js",
   "dependencies": {
     "express": "^4.15.3",
+    "fs": "0.0.1-security",
     "jsrender": "^0.9.86",
     "mysql": "^2.13.0",
     "mysql2": "^1.3.5",
