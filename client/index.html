@@ -1,19 +1,15 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html>
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Recipe Book</title>
-    @Styles.Render("~/bundles/css")
 </head>
 <body>
     <div class="page-header"></div>
     <div class="container-fluid">
-        @RenderBody()
     </div>
     <div id="scripts" hidden>
-        @Scripts.Render("~/bundles/js")
-        @RenderSection("scripts", required: false)
     </div>
 </body>
 </html>
