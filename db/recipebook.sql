@@ -28,7 +28,7 @@ CREATE TABLE Recipe
     Calories INT NULL,
     Notes VARCHAR(1024) NULL,
     Revision INT NOT NULL,
-    CreateDate DATETIME NOT NULL DEFAULT NOW(),
+    CreateDate DATETIME NOT NULL,
     
     CONSTRAINT PK_Recipe PRIMARY KEY (RecipeId),
     CONSTRAINT CHK_TotalTime CHECK (
