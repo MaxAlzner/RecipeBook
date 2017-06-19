@@ -4,6 +4,7 @@ var path = require('path');
 
 var express = require('express');
 var fs = require('fs');
+
 var jsrender = require('jsrender');
 var Fraction = require('fraction.js');
 var groupArray = require('group-array');
@@ -98,6 +99,12 @@ db.Ingredient.hasOne(db.Unit, { foreignKey: 'Code', targetKey: 'UnitCode' });
 db.Direction.hasOne(db.Recipe, { foreignKey: 'RecipeId' });
 db.Unit.hasMany(db.Ingredient, { foreignKey: 'UnitCode' });
 
+jsrender.views.tags({
+    json: function (val) {
+        return JSON.stringify(val).replace(/"/g, '&#34;').replace(/'/g, '&#39;');
+    }
+});
+
 app.get('/', function (request, response) {
     db.Unit.findAll().done(function (units) {
         units = units.map((node) => node.dataValues);
@@ -106,12 +113,14 @@ app.get('/', function (request, response) {
         }).done(function (result) {
             var recipes = result.map((node) => node.dataValues);
             recipes.forEach(function (row) {
+                row.CreateDate = row.CreateDate.toLocaleString();
                 row.Ingredients = row.Ingredients.map(function (ingredient) {
                     ingredient = ingredient.dataValues;
 
+                    ingredient.Quantity = parseFloat(ingredient.Quantity);
                     var f = new Fraction(ingredient.Quantity);
                     if (f.d === 10000) {
-                        var q = parseFloat(ingredient.Quantity);
+                        var q = ingredient.Quantity;
                         var whole = Math.trunc(q);
                         var part = Math.round((q - whole) * 10000);
                         if (part === 3333) {
@@ -141,6 +150,7 @@ app.get('/', function (request, response) {
 
                 var tmpl = jsrender.templates(data);
                 var html = tmpl.render({
+                    Units: units,
                     Recipes: recipes
                 });
                 
