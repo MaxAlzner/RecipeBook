@@ -10,11 +10,7 @@ var groupArray = require('group-array');
 
 var app = express();
 
-var whitelist = [
-  'html', 'htm', 'js', 'css', 'map',
-  'jpg', 'jpeg', 'png', 'gif',
-  'json', 'csv', 'doc', 'docx', 'pdf'
-];
+var whitelist = require('./whitelist.json');
 
 var dbconfig = require('./db-config.json');
 if (!dbconfig) {
@@ -131,7 +127,7 @@ app.get('/', function (request, response) {
                     ingredient.Unit = units.find((unit) => unit.Code === ingredient.UnitCode);
                     return ingredient;
                 });
-                row.IngredientGroups = groupArray(row.Ingredients, 'Section')
+                row.IngredientGroups = groupArray(row.Ingredients, 'Section');
                 row.Directions = row.Directions
                     .map((direction) => direction.dataValues)
                     .sort(function (a, b) { return a.Step - b.Step; });
@@ -170,8 +166,8 @@ app.get(new RegExp('^.*\.(' + whitelist.join('|') + ')$'), function (request, re
       response.end();
   });
 });
-  
-var server = app.listen(process.env.PORT || 3000, function() {
+
+var server = app.listen(process.env.PORT || 3000, process.env.IP || '127.0.0.1', function() {
   var addr = server.address();
   console.log('Server running at', addr.address + ':' + addr.port);
 });
