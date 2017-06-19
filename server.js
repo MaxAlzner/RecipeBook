@@ -189,7 +189,7 @@ app.get(new RegExp('^.*\.(' + whitelist.join('|') + ')$'), function (request, re
   });
 });
   
-var server = app.listen(process.env.PORT || 3000, process.env.IP || '127.0.0.1', function() {
+var server = app.listen(process.env.PORT || 3000, function() {
   var addr = server.address();
   console.log('Server running at', addr.address + ':' + addr.port);
 });
