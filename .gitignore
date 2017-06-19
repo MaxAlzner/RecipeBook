@@ -3,7 +3,8 @@
 
 *.lnk
 
+.vscode/
 node_modules/
+data/
 
-_old/
 db-config.json
