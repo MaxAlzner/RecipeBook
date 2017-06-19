@@ -102,11 +102,17 @@ db.Unit.hasMany(db.Ingredient, { foreignKey: 'UnitCode' });
 jsrender.views.tags({
     json: function (val) {
         return JSON.stringify(val).replace(/"/g, '&#34;').replace(/'/g, '&#39;');
+    },
+    template: function (file, name) {
+        var data = fs.readFileSync(__dirname + '/client/templates/' + file, 'utf8');
+        return '<script id="' + name + '" type="text/x-jsrender">' + data + '</script>';
     }
 });
 
 app.get('/', function (request, response) {
-    db.Unit.findAll().done(function (units) {
+    db.Unit.findAll({
+        order: ['Name']
+    }).done(function (units) {
         units = units.map((node) => node.dataValues);
         db.Recipe.findAll({
             include: [db.Ingredient, db.Direction]
@@ -136,10 +142,15 @@ app.get('/', function (request, response) {
                     ingredient.Unit = units.find((unit) => unit.Code === ingredient.UnitCode);
                     return ingredient;
                 });
+                
                 row.IngredientGroups = groupArray(row.Ingredients, 'Section');
                 row.Directions = row.Directions
                     .map((direction) => direction.dataValues)
                     .sort(function (a, b) { return a.Step - b.Step; });
+                
+                row.Ingredients.forEach(function (ingredient) {
+                    ingredient.Section = !isNaN(ingredient.Section) ? null : ingredient.Section;
+                });
             });
             
             fs.readFile(__dirname + '/client/index.html', 'utf8', function (err, data) {

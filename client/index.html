@@ -23,18 +23,24 @@
             <div class="panel panel-default" data-recipe="{{:RecipeId}}">
                 <div class="panel-heading">
                     <div class="panel-title">
-                        <a role="button" data-toggle="collapse" href="#recipe-collapse-{{:RecipeId}}" aria-expanded="false" aria-controls="recipe-collapse-{{:RecipeId}}">{{:Name}}</a>
-                        <span class="text-muted pull-right">(Rev: {{:Revision}}) {{:CreateDate}}</span>
+                        <div class="media">
+                            <div class="media-left meda-middle">
+                                <div class="btn-group btn-group-xs">
+                                    <button type="button" class="btn btn-default" title="Edit recipe" onclick="$('#EditRecipeModal').trigger('editrecipe.load', Recipes[parseInt($(this).closest('[data-recipe]').attr('data-recipe'), 10)]).modal('show')">
+                                        <span class="glyphicon glyphicon-pencil"></span>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="media-body media-middle">
+                                <a role="button" data-toggle="collapse" href="#recipe-collapse-{{:RecipeId}}" aria-expanded="false" aria-controls="recipe-collapse-{{:RecipeId}}">{{:Name}}</a>
+                                <span class="text-muted pull-right">(Rev: {{:Revision}}) {{:CreateDate}}</span>
+                            </div>
+                        </div>
                     </div>
                 </div>
                 <div id="recipe-collapse-{{:RecipeId}}" class="collapse in">
                     <div class="panel-body">
                         <div class="form-group text-right">
-                            <div class="btn-group btn-group-sm">
-                                <button type="button" class="btn btn-default" title="Edit recipe" onclick="$('#EditRecipeModal').trigger('editrecipe.load', Recipes[parseInt($(this).closest('[data-recipe]').attr('data-recipe'), 10)]).modal('show')">
-                                    <span class="glyphicon glyphicon-pencil"></span>
-                                </button>
-                            </div>
                         </div>
                         <dl class="dl-horizontal">
                             <dt>Prep</dt>
@@ -79,11 +85,14 @@
         </div>
     </div>
     <div class="modal fade" id="EditRecipeModal" tabindex="-1" role="dialog" aria-labelledby="EditRecipeModalLabel">
-        <div class="modal-dialog" role="document">
+        <div class="modal-dialog modal-lg" role="document">
             <form id="editrecipe" class="modal-content" action="saverecipe" method="post" novalidate="novalidate">
                 <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                    <h4 class="modal-title" id="EditRecipeModalLabel">Add/Edit Recipe</h4>
+                    <h4 class="modal-title" id="EditRecipeModalLabel">
+                        <span id="editrecipe-addtitle">Add Recipe</span>
+                        <span id="editrecipe-edittitle">Edit Recipe</span>
+                    </h4>
                 </div>
                 <div class="modal-body">
                     <div class="form-horizontal">
@@ -100,37 +109,59 @@
                         <div class="form-group">
                             <label for="editrecipe-servings" class="col-sm-3 control-label">Servings</label>
                             <div class="col-sm-9">
-                                <input type="number" id="editrecipe-servings" class="form-control" name="recipe[Servings]" required="required" min="1" />
+                                <input type="number" id="editrecipe-servings" class="form-control" name="recipe[Servings]" min="1" />
                             </div>
                         </div>
                         <div class="form-group">
                             <label for="editrecipe-calories" class="col-sm-3 control-label">Calories</label>
                             <div class="col-sm-9">
-                                <input type="number" id="editrecipe-calories" class="form-control" name="recipe[Calories]" required="required" min="0" />
+                                <input type="number" id="editrecipe-calories" class="form-control" name="recipe[Calories]" min="0" />
                             </div>
                         </div>
                         <div class="form-group">
                             <label for="editrecipe-preptime" class="col-sm-3 control-label">Prep (min)</label>
                             <div class="col-sm-9">
-                                <input type="number" id="editrecipe-preptime" class="form-control" name="recipe[PrepTime]" required="required" min="0" />
+                                <input type="number" id="editrecipe-preptime" class="form-control" name="recipe[PrepTime]" min="0" />
                             </div>
                         </div>
                         <div class="form-group">
                             <label for="editrecipe-cooktime" class="col-sm-3 control-label">Cook (min)</label>
                             <div class="col-sm-9">
-                                <input type="number" id="editrecipe-cooktime" class="form-control" name="recipe[CookTime]" required="required" min="0" />
+                                <input type="number" id="editrecipe-cooktime" class="form-control" name="recipe[CookTime]" min="0" />
                             </div>
                         </div>
                         <div class="form-group">
                             <label for="editrecipe-totaltime" class="col-sm-3 control-label">Total (min)</label>
                             <div class="col-sm-9">
-                                <input type="number" id="editrecipe-totaltime" class="form-control" name="recipe[TotalTime]" required="required" min="0" />
+                                <input type="number" id="editrecipe-totaltime" class="form-control" name="recipe[TotalTime]" min="0" />
                             </div>
                         </div>
                     </div>
                     <div class="form-group">
                         <label for="editrecipe-notes" class="control-label">Notes</label>
                         <textarea id="editrecipe-notes" class="form-control" name="recipe[Notes]" maxlength="1024"></textarea>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <fieldset>
+                                    <legend class="h4">Ingredients<button type="button" id="editrecipe-addingredient" class="btn btn-success btn-xs pull-right"><span class="glyphicon glyphicon-plus"></span></button></legend>
+                                    <div id="ingredients">
+                                        <div id="ingredients-empty" class="text-muted">There are no ingredients.</div>
+                                    </div>
+                                </fieldset>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <fieldset>
+                                    <legend class="h4">Directions<button type="button" id="editrecipe-adddirection" class="btn btn-success btn-xs pull-right"><span class="glyphicon glyphicon-plus"></span></button></legend>
+                                    <div id="directions">
+                                        <div id="directions-empty" class="text-muted">There are no directions.</div>
+                                    </div>
+                                </fieldset>
+                            </div>
+                        </div>
                     </div>
                     <div id="EditRecipeSaveFailure" class="alert alert-danger" role="alert">
                         Failed to save recipe.
@@ -151,10 +182,14 @@
     </div>
     <div id="scripts" hidden>
         <input type="hidden" id="recipes" value="{{json Recipes /}}" />
+        <input type="hidden" id="units" value="{{json Units /}}" />
+        {{template "ingredient.html" "IngredientTemplate" /}}
+        {{template "direction.html" "DirectionTemplate" /}}
         <script type="text/javascript" src="js/jquery-3.2.1.min.js"></script>
         <script type="text/javascript" src="js/bootstrap.min.js"></script>
         <script type="text/javascript" src="js/jquery.validate.min.js"></script>
         <script type="text/javascript" src="js/jquery.validate.unobtrusive.min.js"></script>
+        <script type="text/javascript" src="js/jsrender.js"></script>
         <script type="text/javascript" src="js/index.js"></script>
     </div>
 </body>

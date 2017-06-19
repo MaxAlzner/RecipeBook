@@ -1,0 +1,45 @@
+<div class="ingredient">
+    <input type="hidden" class="ingredient-ingredientid" name="recipe[Ingredients][][IngredientId]" value="{{:Ingredient.IngredientId}}" />
+    <input type="hidden" class="ingredient-recipeid" name="recipe[Ingredients][][RecipeId]" value="{{:Ingredient.RecipeId}}" />
+    <div class="media">
+        <div class="media-body">
+            <div class="form-horizontal">
+                <div class="form-group form-group-sm">
+                    <label for="ingredient{{:i}}-name" class="col-sm-3 control-label">Name</label>
+                    <div class="col-sm-9">
+                        <input type="text" id="ingredient{{:i}}-name" class="form-control ingredient-name" name="recipe[Ingredients][][Name]" value="{{:Ingredient.Name}}" required="required" maxlength="256" />
+                    </div>
+                </div>
+                <div class="form-group form-group-sm">
+                    <label for="ingredient{{:i}}-unitcode" class="col-sm-3 control-label">Unit</label>
+                    <div class="col-sm-9">
+                        <select id="ingredient{{:i}}-unitcode" class="form-control ingredient-unitcode" name="recipe[Ingredients][][UnitCode]" required="required">
+                            {{for Units}}
+                            <option value="{{:Code}}" {{if Code === ~root.Ingredient.UnitCode}}selected{{/if}}>{{:ShortName}}</option>
+                            {{/for}}
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group form-group-sm">
+                    <label for="ingredient{{:i}}-quantity" class="col-sm-3 control-label">Quantity</label>
+                    <div class="col-sm-9">
+                        <input type="number" id="ingredient{{:i}}-quantity" class="form-control ingredient-quantity" name="recipe[Ingredients][][Quantity]" value="{{:Ingredient.Quantity}}" required="required" min="0" />
+                    </div>
+                </div>
+                <div class="form-group form-group-sm">
+                    <label for="ingredient{{:i}}-section" class="col-sm-3 control-label">Section</label>
+                    <div class="col-sm-9">
+                        <input type="text" id="ingredient{{:i}}-section" class="form-control ingredient-section" name="recipe[Ingredients][][Section]" value="{{:Ingredient.Section}}" maxlength="64" />
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="media-right media-middle">
+            <div class="btn-group btn-group-xs">
+                <button type="button" class="btn btn-danger" onclick="$(this).closest('.ingredient').remove(); $('#ingredients').trigger('editrecipe.reorder');">
+                    <span class="glyphicon glyphicon-minus"></span>
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
