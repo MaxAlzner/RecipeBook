@@ -67,7 +67,7 @@ var Recipes = [];
             $('#editrecipe-servings').val(recipe.Servings || '');
             $('#editrecipe-calories').val(recipe.Calories || '');
             $('#editrecipe-notes').val(recipe.Notes || '');
-            $('#editrecipe-revision').val(recipe.Revision || '');
+            // $('#editrecipe-revision').val(recipe.Revision || '');
             $('#editrecipe-createdate').val(recipe.CreateDate || '');
             
             $('#ingredients-empty').hide().siblings().remove();

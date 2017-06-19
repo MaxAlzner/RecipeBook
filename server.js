@@ -186,27 +186,59 @@ app.post('/saverecipe', bodyParser.urlencoded({ extended: true }), function (req
     }
     
     if (!recipe.Name) {
-        response.status(500).send('Name is a required field.').end();
+        response.status(500).send('Recipe name is a required field.').end();
     }
     
     if (!recipe.UniqueId) {
         recipe.UniqueId = uuid();
     }
     
+    recipe.PrepTime = recipe.PrepTime || null;
+    recipe.CookTime = recipe.CookTime || null;
+    recipe.TotalTime = recipe.TotalTime || null;
+    recipe.Servings = recipe.Servings || null;
+    recipe.Calories = recipe.Calories || null;
+    recipe.Notes = recipe.Notes || null;
     recipe.CreateDate = (new Date()).toISOString().slice(0, 19).replace('T', ' ');
-    
+    recipe.Ingredients = recipe.Ingredients || [];
+    recipe.Directions = recipe.Directions || [];
+
+    recipe.Ingredients.forEach((ingredient) => {
+        if (!ingredient.Name) {
+            response.status(500).send('Ingredient name is a required field.').end();
+        }
+        
+        if (!ingredient.UnitCode) {
+            response.status(500).send('Ingredient unit is a required field.').end();
+        }
+        
+        if (!ingredient.Quantity) {
+            response.status(500).send('Ingredient quantity is a required field.').end();
+        }
+
+        ingredient.Section = ingredient.Section || null;
+    });
+
+    recipe.Directions.forEach((direction) => {
+        if (!direction.Step) {
+            response.status(500).send('Direction step is a required field.').end();
+        }
+        
+        if (!direction.Description) {
+            response.status(500).send('Direction description is a required field.').end();
+        }
+    });
+
+    // console.log(JSON.stringify(recipe));
+
     db.Recipe.findOne({
         attributes: ['Revision'],
-        where: {
-            UniqueId: recipe.UniqueId
-        },
-        order: [
-            ['Revision', 'DESC']
-            //connection.fn('MAX', connection.col('Revision'))
-        ]
+        where: { UniqueId: recipe.UniqueId },
+        order: [['Revision', 'DESC']]
     }).done(function (rev) {
-        console.log('Saving Recipe', 'Revision: ', rev.dataValues.Revision + 1);
-        recipe.Revision = rev.dataValues.Revision + 1;
+        rev = (rev ? rev.dataValues.Revision : 0) + 1;
+        // console.log('Saving Recipe', 'Revision: ', rev);
+        recipe.Revision = rev;
         
         connection.transaction(function (t) {
             return db.Recipe.create(recipe, { transaction: t }).then(function (result) {
@@ -214,19 +246,16 @@ app.post('/saverecipe', bodyParser.urlencoded({ extended: true }), function (req
                 recipe.Ingredients.forEach((ingredient) => ingredient.RecipeId = result.null);
                 recipe.Directions.forEach((direction) => direction.RecipeId = result.null);
                 
-                // return db.Ingredient.bulkCreate(recipe.Ingredients, { transaction: t }).then(function () {
-                //     return db.Direction.bulkCreate(recipe.Directions, { transaction: t }).then(function () {
-                //         t.commit();
-                //     });
-                // });
+                return db.Ingredient.bulkCreate(recipe.Ingredients, { transaction: t }).then(function () {
+                    return db.Direction.bulkCreate(recipe.Directions, { transaction: t });
+                });
             });
         }).then(function (result) {
-            
+            response.json(recipe);
         }).catch(function (err) {
             console.log('ERROR', err);
         });
     });
-    response.json(recipe);
 });
 
 app.get(new RegExp('^.*\.(' + whitelist.join('|') + ')$'), function (request, response) {
