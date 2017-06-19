@@ -31,35 +31,25 @@
                     <dt>Calories</dt>
                     <dd>{{:Calories}}</dd>
                 </dl>
-                <!--@{
-                    var ingredientGroups = recipe.Ingredients
-                        .GroupBy(q => q.Section);
-                }
-                @foreach (var ingredientGroup in ingredientGroups)
-                {
-                    <fieldset>
-                        <legend class="h5">@ingredientGroup.Key</legend>
-                        <ul>
-                            @foreach (var ingredient in ingredientGroup.ToList())
-                            {
-                                if (ingredient.UnitCode == "EA")
-                                {
-                                    <li>@ingredient.QuantityFraction.ToString("m") @ingredient.Name</li>
-                                }
-                                else
-                                {
-                                    <li>(@ingredient.QuantityFraction.ToString("m") @ingredient.Unit.ShortName) @ingredient.Name</li>
-                                }
-                            }
-                        </ul>
-                    </fieldset>
-                }
+                {{props IngredientGroups}}
+                <fieldset>
+                    <legend>{{if key !== '0'}}{{:key}}{{/if}}</legend>
+                    <ul>
+                        {{for prop}}
+                        {{if UnitCode === 'EA'}}
+                        <li>{{:QuantityFraction}} {{:Name}}</li>
+                        {{else}}
+                        <li>({{:QuantityFraction}} {{:Unit.ShortName}}) {{:Name}}</li>
+                        {{/if}}
+                        {{/for}}
+                    </ul>
+                </fieldset>
+                {{/props}}
                 <ol>
-                    @foreach (var step in recipe.Directions.OrderBy(q => q.Step).ToList())
-                    {
-                        <li>@step.Description</li>
-                    }
-                </ol>-->
+                    {{for Directions}}
+                    <li>{{:Description}}</li>
+                    {{/for}}
+                </ol>
                 <p>{{:Notes}}</p>
             </div>
         </div>

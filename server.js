@@ -5,6 +5,8 @@ var path = require('path');
 var express = require('express');
 var fs = require('fs');
 var jsrender = require('jsrender');
+var Fraction = require('fraction.js');
+var groupArray = require('group-array');
 
 var app = express();
 
@@ -34,11 +36,6 @@ var connection = new Sequelize(dbconfig.database, dbconfig.user, dbconfig.passwo
         timestamps: false
     }
 });
-// connection.authenticate().then(() => {
-//     console.log('Connection has been established successfully.');
-// }).catch(err => {
-//     console.error('Unable to connect to the database:', err);
-// });
 
 const db = {
     Unit: connection.define('Unit', {
@@ -81,7 +78,7 @@ const db = {
             references: 'Unit',
             referencesKey: 'Code'
         },
-        Quantity: Sequelize.FLOAT,
+        Quantity: Sequelize.DECIMAL,
         Section: Sequelize.STRING
     }),
     Direction: connection.define('Direction', {
@@ -105,6 +102,24 @@ db.Ingredient.hasOne(db.Unit, { foreignKey: 'Code', targetKey: 'UnitCode' });
 db.Direction.hasOne(db.Recipe, { foreignKey: 'RecipeId' });
 db.Unit.hasMany(db.Ingredient, { foreignKey: 'UnitCode' });
 
+/*
+var q = Fraction.FromDecimal(this.Quantity);
+
+if (q.Denominator == 10000)
+{
+    var whole = Math.Truncate(this.Quantity);
+    if ((this.Quantity - whole) == 0.3333m)
+    {
+        q = new Fraction(((int)whole * 3) + 1, 3);
+    }
+    else if ((this.Quantity - whole) == 0.6667m)
+    {
+        q = new Fraction(((int)whole * 3) + 2, 3);
+    }
+}
+
+return q;
+*/
 app.get('/', function (request, response) {
     db.Unit.findAll().done(function (units) {
         units = units.map((node) => node.dataValues);
@@ -115,10 +130,29 @@ app.get('/', function (request, response) {
             recipes.forEach(function (row) {
                 row.Ingredients = row.Ingredients.map(function (ingredient) {
                     ingredient = ingredient.dataValues;
+
+                    var f = new Fraction(ingredient.Quantity);
+                    if (f.d === 10000) {
+                        var q = parseFloat(ingredient.Quantity);
+                        var whole = Math.trunc(q);
+                        var part = Math.round((q - whole) * 10000);
+                        if (part === 3333) {
+                            f = new Fraction((whole * 3) + 1, 3);
+                        }
+                        else if (part === 6667) {
+                            f = new Fraction((whole * 3) + 2, 3);
+                        }
+                    }
+
+                    ingredient.QuantityFraction = f.toFraction(true);
+                    ingredient.Section = ingredient.Section === null ? 0 : ingredient.Section;
                     ingredient.Unit = units.find((unit) => unit.Code === ingredient.UnitCode);
                     return ingredient;
                 });
-                row.Directions = row.Directions.map((direction) => direction.dataValues);
+                row.IngredientGroups = groupArray(row.Ingredients, 'Section')
+                row.Directions = row.Directions
+                    .map((direction) => direction.dataValues)
+                    .sort(function (a, b) { return a.Step - b.Step; });
             });
             
             fs.readFile(__dirname + '/client/index.html', 'utf8', function (err, data) {
