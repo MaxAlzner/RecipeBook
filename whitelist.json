@@ -12,5 +12,8 @@
     "csv",
     "doc",
     "docx",
-    "pdf"
+    "pdf",
+    "woff",
+    "woff2",
+    "tiff"
 ]
