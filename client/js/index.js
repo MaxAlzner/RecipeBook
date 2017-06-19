@@ -58,7 +58,7 @@ var Recipes = [];
                 $('#editrecipe-edittitle').hide();
             }
             
-            $('#editrecipe-recipeid').val(recipe.RecipeId || '');
+            // $('#editrecipe-recipeid').val(recipe.RecipeId || '');
             $('#editrecipe-uniqueid').val(recipe.UniqueId || '');
             $('#editrecipe-name').val(recipe.Name || '');
             $('#editrecipe-preptime').val(recipe.PrepTime || '');
@@ -158,9 +158,9 @@ var Recipes = [];
         });
     $('#ingredients')
         .on('editrecipe.reorder', function () {
-            $('#ingredients .ingredient-ingredientid').each(function (index) {
-                this.name = 'recipe[Ingredients][' + index + '][IngredientId]';
-            });
+            // $('#ingredients .ingredient-ingredientid').each(function (index) {
+            //     this.name = 'recipe[Ingredients][' + index + '][IngredientId]';
+            // });
             $('#ingredients .ingredient-recipeid').each(function (index) {
                 this.name = 'recipe[Ingredients][' + index + '][RecipeId]';
             });
@@ -179,9 +179,9 @@ var Recipes = [];
         });
     $('#directions')
         .on('editrecipe.reorder', function () {
-            $('#directions .direction-directionid').each(function (index) {
-                this.name = 'recipe[Directions][' + index + '][DirectionId]';
-            });
+            // $('#directions .direction-directionid').each(function (index) {
+            //     this.name = 'recipe[Directions][' + index + '][DirectionId]';
+            // });
             $('#directions .direction-recipeid').each(function (index) {
                 this.name = 'recipe[Directions][' + index + '][RecipeId]';
             });

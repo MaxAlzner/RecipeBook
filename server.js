@@ -3,7 +3,10 @@ var http = require('http');
 var path = require('path');
 
 var express = require('express');
+var bodyParser = require('body-parser');
+
 var fs = require('fs');
+var uuid = require('uuid/v1');
 
 var jsrender = require('jsrender');
 var Fraction = require('fraction.js');
@@ -174,6 +177,56 @@ app.get('/', function (request, response) {
             });
         });
     });
+});
+
+app.post('/saverecipe', bodyParser.urlencoded({ extended: true }), function (request, response) {
+    var recipe = request.body.recipe;
+    if (!recipe) {
+        response.status(500).send('No data sent.').end();
+    }
+    
+    if (!recipe.Name) {
+        response.status(500).send('Name is a required field.').end();
+    }
+    
+    if (!recipe.UniqueId) {
+        recipe.UniqueId = uuid();
+    }
+    
+    recipe.CreateDate = (new Date()).toISOString().slice(0, 19).replace('T', ' ');
+    
+    db.Recipe.findOne({
+        attributes: ['Revision'],
+        where: {
+            UniqueId: recipe.UniqueId
+        },
+        order: [
+            ['Revision', 'DESC']
+            //connection.fn('MAX', connection.col('Revision'))
+        ]
+    }).done(function (rev) {
+        console.log('Saving Recipe', 'Revision: ', rev.dataValues.Revision + 1);
+        recipe.Revision = rev.dataValues.Revision + 1;
+        
+        connection.transaction(function (t) {
+            return db.Recipe.create(recipe, { transaction: t }).then(function (result) {
+                console.log('New Recipe ID: ', result.null);
+                recipe.Ingredients.forEach((ingredient) => ingredient.RecipeId = result.null);
+                recipe.Directions.forEach((direction) => direction.RecipeId = result.null);
+                
+                // return db.Ingredient.bulkCreate(recipe.Ingredients, { transaction: t }).then(function () {
+                //     return db.Direction.bulkCreate(recipe.Directions, { transaction: t }).then(function () {
+                //         t.commit();
+                //     });
+                // });
+            });
+        }).then(function (result) {
+            
+        }).catch(function (err) {
+            console.log('ERROR', err);
+        });
+    });
+    response.json(recipe);
 });
 
 app.get(new RegExp('^.*\.(' + whitelist.join('|') + ')$'), function (request, response) {
