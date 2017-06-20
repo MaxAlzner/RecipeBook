@@ -10,7 +10,7 @@
             <div class="tab-content">
                 {{for prop ~length=prop.length}}
                 <div role="tabpanel" class="tab-pane {{if #index === (~length - 1)}}active{{/if}}" id="recipe-collapse-{{:RecipeId}}">
-                    <div class="">
+                    <div class="recipe" data-recipe="{{:RecipeId}}" data-name="{{:Name}}">
                         <h3>{{:Name}}</h3>
                         <dl class="dl-horizontal">
                             <dt>Prep</dt>
@@ -45,7 +45,12 @@
                             <li>{{:Description}}</li>
                             {{/for}}
                         </ol>
-                        <p>{{:Notes}}</p>
+                        <p>{{html Notes /}}</p>
+                        <div class="btn-group btn-group-sm pull-right">
+                            <button type="button" class="btn btn-default" title="Revise recipe" onclick="$('#EditRecipeModal').trigger('editrecipe.load', FindRecipe(parseInt($(this).closest('[data-recipe]').attr('data-recipe'), 10))).modal('show')">
+                                <span class="glyphicon glyphicon-edit"></span>&nbsp;Revise
+                            </button>
+                        </div>
                     </div>
                 </div>
                 {{/for}}

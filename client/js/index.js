@@ -1,20 +1,17 @@
 /*globals $ */
 
 function FindRecipe(id) {
-    var recipes = JSON.parse($('#recipes').val() || '[]');
-    return Object.values(recipes).find(function (group) {
-        return group.find(function (recipe) {
+    var recipes = JSON.parse($('#recipes').val() || '[]'), recipe;
+    Object.values(recipes).forEach(function (group) {
+        recipe = recipe || group.find(function (recipe) {
             return recipe.RecipeId === id;
         });
     });
+    return recipe;
 }
 
 (function () {
     'use strict';
-    
-    var units = JSON.parse($('#units').val() || '[]');
-
-    $('#recipelist').append($('#RecipeViewTemplate').render(JSON.parse($('#recipes').val() || '[]')));
     
     $.validator.setDefaults({
         debug: true,
@@ -50,6 +47,16 @@ function FindRecipe(id) {
         }
     });
     
+    $.views.tags({
+        html: function (val) {
+            return (val || '').replace(/\n/g, '<br />');
+        }
+    });
+    
+    var units = JSON.parse($('#units').val() || '[]');
+    
+    $('#recipelist').append($('#RecipeViewTemplate').render(JSON.parse($('#recipes').val() || '[]')));
+    
     $('#EditRecipeModal')
         .on('editrecipe.load', function (e, recipe) {
             if (recipe.RecipeId) {
@@ -61,6 +68,7 @@ function FindRecipe(id) {
                 $('#editrecipe-edittitle').hide();
             }
             
+            console.log(recipe);
             // $('#editrecipe-recipeid').val(recipe.RecipeId || '');
             $('#editrecipe-uniqueid').val(recipe.UniqueId || '');
             $('#editrecipe-name').val(recipe.Name || '');

@@ -157,10 +157,15 @@ function GetRecipes() {
                         ingredient.Section = !isNaN(ingredient.Section) ? null : ingredient.Section;
                     });
                 });
+                recipes = groupArray(recipes.sort((a, b) => {
+                    return a.Name.localeCompare(b.Name);
+                }), 'UniqueId');
+                for (var key in recipes) {
+                    recipes[key] = recipes[key].sort((a, b) => a.Revision - b.Revision);
+                }
+                
                 resolve({
-                    Recipes: groupArray(recipes.sort((a, b) => {
-                        return a.Name.localeCompare(b.Name);
-                    }), 'UniqueId'),
+                    Recipes: recipes,
                     Units: units    
                 });
             });
