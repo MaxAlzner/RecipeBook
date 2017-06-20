@@ -1,4 +1,8 @@
 
+body {
+    margin-bottom: 100px;
+}
+
 textarea.form-control {
     resize: vertical;
     min-height: 100px;
@@ -13,7 +17,6 @@ textarea.form-control {
     right: 0;
     top: 0;
     bottom: 0;
-    /*padding: 20px 10px;*/
     vertical-align: middle;
     z-index: 999;
 }
@@ -22,6 +25,13 @@ textarea.form-control {
     top: 50%;
     transform: translateY(-50%);
     margin-left: -40px;
+}
+
+#controls {
+    position: fixed;
+    bottom: 0;
+    left: 20px;
+    z-index: 999;
 }
 
 .zoom {
