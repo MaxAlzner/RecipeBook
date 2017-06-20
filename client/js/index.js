@@ -173,7 +173,7 @@ function RefreshRecipes(recipes) {
 
             return false;
         })
-        .on('change', 'input', function () {
+        .on('change', 'input, textarea, select', function () {
             $(this).valid();
         })
         .validate();

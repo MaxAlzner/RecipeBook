@@ -7,7 +7,7 @@
                 <div class="form-group form-group-sm">
                     <label for="ingredient{{:i}}-name" class="col-sm-3 control-label">Name</label>
                     <div class="col-sm-9">
-                        <input type="text" id="ingredient{{:i}}-name" class="form-control ingredient-name" name="recipe[Ingredients][][Name]" value="{{:Ingredient.Name}}" required="required" maxlength="256" />
+                        <input type="text" id="ingredient{{:i}}-name" class="form-control ingredient-name" name="recipe[Ingredients][][Name]" value="{{:Ingredient.Name}}" required="required" maxlength="256" spellcheck="true" />
                     </div>
                 </div>
                 <div class="form-group form-group-sm">
@@ -29,7 +29,7 @@
                 <div class="form-group form-group-sm">
                     <label for="ingredient{{:i}}-section" class="col-sm-3 control-label">Section</label>
                     <div class="col-sm-9">
-                        <input type="text" id="ingredient{{:i}}-section" class="form-control ingredient-section" name="recipe[Ingredients][][Section]" value="{{:Ingredient.Section}}" maxlength="64" />
+                        <input type="text" id="ingredient{{:i}}-section" class="form-control ingredient-section" name="recipe[Ingredients][][Section]" value="{{:Ingredient.Section}}" maxlength="64" spellcheck="true" />
                     </div>
                 </div>
             </div>
