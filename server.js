@@ -266,7 +266,8 @@ app.post('/saverecipe', bodyParser.urlencoded({ extended: true }), function (req
                 });
             });
         }).then(function (result) {
-            response.status(200).end();
+            // response.status(200).end();
+            response.json(recipe);
         }).catch(function (err) {
             console.log('ERROR', err);
         });

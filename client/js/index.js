@@ -10,6 +10,31 @@ function FindRecipe(id) {
     return recipe;
 }
 
+function RefreshRecipes(recipes) {
+    var alph = {};
+    Object.values(JSON.parse($('#recipes').val() || '[]'))
+        .reduce(function (acc, val) { return acc.concat(val); }, [])
+        .forEach(function (recipe) {
+            var ch = recipe.Name.toUpperCase().charAt(0);
+            ch = !!ch.match(/[A-Z]/i) ? ch : '#';
+            if (alph[ch] === undefined) {
+                alph[ch] = recipe.UniqueId;
+            }
+        });
+    
+    $('#recipes').val(JSON.stringify(recipes));
+    $('#recipelist').empty().append($('#RecipeViewTemplate').render(recipes));
+    
+    $('#pager li').addClass('disabled');
+    $('#pager [data-group]').removeAttr('data-group');
+    for (var ch in alph) {
+        $('#pager li > a[data-char="' + ch + '"]')
+            .attr('data-group', alph[ch])
+            .parent()
+            .removeClass('disabled');
+    }
+}
+
 (function () {
     'use strict';
     
@@ -55,7 +80,20 @@ function FindRecipe(id) {
     
     var units = JSON.parse($('#units').val() || '[]');
     
-    $('#recipelist').append($('#RecipeViewTemplate').render(JSON.parse($('#recipes').val() || '[]')));
+    RefreshRecipes(JSON.parse($('#recipes').val() || '[]'));
+    
+    $('#pager')
+        .on('click', 'a', function (e) {
+            e.preventDefault();
+            var group = $(this).attr('data-group');
+            console.log($('#recipelist [data-group="' + group + '"]'));
+            if (group) {
+                $('html, body').animate({
+                    scrollTop: $('#recipelist [data-group="' + group + '"]').position().top
+                }, 500);
+            }
+            return false;
+        });
     
     $('#EditRecipeModal')
         .on('editrecipe.load', function (e, recipe) {
@@ -68,7 +106,6 @@ function FindRecipe(id) {
                 $('#editrecipe-edittitle').hide();
             }
             
-            console.log(recipe);
             // $('#editrecipe-recipeid').val(recipe.RecipeId || '');
             $('#editrecipe-uniqueid').val(recipe.UniqueId || '');
             $('#editrecipe-name').val(recipe.Name || '');
@@ -121,12 +158,12 @@ function FindRecipe(id) {
             e.preventDefault();
             $('#EditRecipeSaveFailure').hide();
             if ($(this).valid()) {
-                $.post(this.action, $(this).serialize(), function () {
+                $.post(this.action, $(this).serialize(), function (response) {
                     $.get('getrecipes', function (response) {
                         $('#recipes').val(JSON.stringify(response));
                         $('#EditRecipeModal')
                             .modal('hide');
-                        $('#recipelist').empty().append($('#RecipeViewTemplate').render(response));
+                        RefreshRecipes(response);
                     });
                 })
                 .fail(function () {
