@@ -1,0 +1,65 @@
+{{props #data}}
+{{for prop}}
+<div class="panel panel-default" data-recipe="{{:RecipeId}}">
+    <div class="panel-heading">
+        <div class="panel-title">
+            <div class="media">
+                <div class="media-left meda-middle">
+                    <div class="btn-group btn-group-xs">
+                        <button type="button" class="btn btn-default" title="Edit recipe" onclick="$('#EditRecipeModal').trigger('editrecipe.load', FindRecipe(parseInt($(this).closest('[data-recipe]').attr('data-recipe'), 10))).modal('show')">
+                            <span class="glyphicon glyphicon-pencil"></span>
+                        </button>
+                    </div>
+                </div>
+                <div class="media-body media-middle">
+                    <a role="button" data-toggle="collapse" href="#recipe-collapse-{{:RecipeId}}" aria-expanded="false" aria-controls="recipe-collapse-{{:RecipeId}}">{{:Name}}</a>
+                    <span class="text-muted pull-right">(Rev: {{:Revision}}) {{:CreateDate}}</span>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="recipe-collapse-{{:RecipeId}}" class="collapse">
+        <div class="panel-body">
+            <div class="form-group text-right">
+            </div>
+            <dl class="dl-horizontal">
+                <dt>Prep</dt>
+                <dd>{{:PrepTime}}</dd>
+                <dt>Cook</dt>
+                <dd>{{:CookTime}}</dd>
+                <dt>Total</dt>
+                <dd>{{:TotalTime}}</dd>
+                <dt>Servings</dt>
+                <dd>{{:Servings}}</dd>
+                <dt>Calories</dt>
+                <dd>{{:Calories}}</dd>
+            </dl>
+            <div class="row">
+                {{props IngredientGroups}}
+                <div class="col-sm-6">
+                    <h5>{{if key !== '0'}}{{:key}}{{/if}}</h5>
+                    <ul>
+                        {{for prop}}
+                        {{if UnitCode === 'EA'}}
+                        <li>{{:QuantityFraction}} {{:Name}}</li>
+                        {{else}}
+                        <li>({{:QuantityFraction}} {{:Unit.ShortName}}) {{:Name}}</li>
+                        {{/if}}
+                        {{/for}}
+                    </ul>
+                </div>
+                {{/props}}
+            </div>
+            <ol>
+                {{for Directions}}
+                <li>{{:Description}}</li>
+                {{/for}}
+            </ol>
+            <p>{{:Notes}}</p>
+        </div>
+    </div>
+</div>
+{{/for}}
+{{else}}
+<p>There are no recipes.</p>
+{{/props}}

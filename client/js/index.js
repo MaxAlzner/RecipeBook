@@ -1,17 +1,20 @@
 /*globals $ */
 
-var Recipes = [];
+function FindRecipe(id) {
+    var recipes = JSON.parse($('#recipes').val() || '[]');
+    return Object.values(recipes).find(function (group) {
+        return group.find(function (recipe) {
+            return recipe.RecipeId === id;
+        });
+    });
+}
 
 (function () {
     'use strict';
     
-    var recipes = JSON.parse($('#recipes').val() || '[]');
     var units = JSON.parse($('#units').val() || '[]');
-    recipes.forEach(function (recipe) {
-        Recipes[recipe.RecipeId] = recipe;
-    });
-    
-    $('[data-recipe]').not(':first-child').find('.collapse').removeClass('in');
+
+    $('#recipelist').append($('#RecipeViewTemplate').render(JSON.parse($('#recipes').val() || '[]')));
     
     $.validator.setDefaults({
         debug: true,
@@ -104,24 +107,23 @@ var Recipes = [];
             $('#editrecipe').validate().resetForm();
             $('#editrecipe .has-error').removeClass('has-error');
             $('#editrecipe textarea').css('height', '');
-        })
-        .on('shown.bs.modal', function () {
-            // $('#editrecipe-name').focus();
         });
     $('#editrecipe')
         .submit(function (e) {
             e.preventDefault();
             $('#EditRecipeSaveFailure').hide();
             if ($(this).valid()) {
-                $
-                    .post(this.action, $(this).serialize(), function (response) {
-                        Recipes[response.RecipeId] = response;
+                $.post(this.action, $(this).serialize(), function () {
+                    $.get('getrecipes', function (response) {
+                        $('#recipes').val(JSON.stringify(response));
                         $('#EditRecipeModal')
                             .modal('hide');
-                    })
-                    .fail(function () {
-                        $('#EditRecipeSaveFailure').show();
+                        $('#recipelist').empty().append($('#RecipeViewTemplate').render(response));
                     });
+                })
+                .fail(function () {
+                    $('#EditRecipeSaveFailure').show();
+                });
             }
 
             return false;
@@ -158,9 +160,6 @@ var Recipes = [];
         });
     $('#ingredients')
         .on('editrecipe.reorder', function () {
-            // $('#ingredients .ingredient-ingredientid').each(function (index) {
-            //     this.name = 'recipe[Ingredients][' + index + '][IngredientId]';
-            // });
             $('#ingredients .ingredient-recipeid').each(function (index) {
                 this.name = 'recipe[Ingredients][' + index + '][RecipeId]';
             });
@@ -179,9 +178,6 @@ var Recipes = [];
         });
     $('#directions')
         .on('editrecipe.reorder', function () {
-            // $('#directions .direction-directionid').each(function (index) {
-            //     this.name = 'recipe[Directions][' + index + '][DirectionId]';
-            // });
             $('#directions .direction-recipeid').each(function (index) {
                 this.name = 'recipe[Directions][' + index + '][RecipeId]';
             });
@@ -193,8 +189,4 @@ var Recipes = [];
                 this.name = 'recipe[Directions][' + index + '][Description]';
             });
         });
-    // $('#editrecipe-preptime, #editrecipe-cooktime')
-    //     .on('focusout', function () {
-    //         $('#editrecipe-totaltime').val((parseInt($('#editrecipe-preptime').val(), 10) || 0) + (parseInt($('#editrecipe-cooktime').val(), 10) || 0));
-    //     });
 }());

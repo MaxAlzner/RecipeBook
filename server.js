@@ -5,6 +5,7 @@ var path = require('path');
 var express = require('express');
 var bodyParser = require('body-parser');
 
+var Promise = require('promise');
 var fs = require('fs');
 var uuid = require('uuid/v1');
 
@@ -112,69 +113,78 @@ jsrender.views.tags({
     }
 });
 
+function GetRecipes() {
+    return new Promise(function (resolve, reject) {
+        db.Unit.findAll({
+            order: ['Name']
+        }).done(function (units) {
+            units = units.map((node) => node.dataValues);
+            db.Recipe.findAll({
+                include: [db.Ingredient, db.Direction]
+            }).done(function (result) {
+                var recipes = result.map((node) => node.dataValues);
+                recipes.forEach(function (row) {
+                    row.CreateDate = row.CreateDate.toLocaleString();
+                    row.Ingredients = row.Ingredients.map(function (ingredient) {
+                        ingredient = ingredient.dataValues;
+
+                        ingredient.Quantity = parseFloat(ingredient.Quantity);
+                        var f = new Fraction(ingredient.Quantity);
+                        if (f.d === 10000) {
+                            var q = ingredient.Quantity;
+                            var whole = Math.trunc(q);
+                            var part = Math.round((q - whole) * 10000);
+                            if (part === 3333) {
+                                f = new Fraction((whole * 3) + 1, 3);
+                            }
+                            else if (part === 6667) {
+                                f = new Fraction((whole * 3) + 2, 3);
+                            }
+                        }
+
+                        ingredient.QuantityFraction = f.toFraction(true);
+                        ingredient.Section = ingredient.Section === null ? 0 : ingredient.Section;
+                        ingredient.Unit = units.find((unit) => unit.Code === ingredient.UnitCode);
+                        return ingredient;
+                    });
+                    
+                    row.IngredientGroups = groupArray(row.Ingredients, 'Section');
+                    row.Directions = row.Directions
+                        .map((direction) => direction.dataValues)
+                        .sort(function (a, b) { return a.Step - b.Step; });
+                    
+                    row.Ingredients.forEach(function (ingredient) {
+                        ingredient.Section = !isNaN(ingredient.Section) ? null : ingredient.Section;
+                    });
+                });
+                resolve({
+                    Recipes: groupArray(recipes.sort((a, b) => {
+                        return a.Name.localeCompare(b.Name);
+                    }), 'UniqueId'),
+                    Units: units    
+                });
+            });
+        });
+    });
+}
+
 app.get('/', function (request, response) {
-    db.Unit.findAll({
-        order: ['Name']
-    }).done(function (units) {
-        units = units.map((node) => node.dataValues);
-        db.Recipe.findAll({
-            include: [db.Ingredient, db.Direction]
-        }).done(function (result) {
-            var recipes = result.map((node) => node.dataValues);
-            recipes.forEach(function (row) {
-                row.CreateDate = row.CreateDate.toLocaleString();
-                row.Ingredients = row.Ingredients.map(function (ingredient) {
-                    ingredient = ingredient.dataValues;
+    GetRecipes().then(function (data) {
+        fs.readFile(__dirname + '/client/index.html', 'utf8', function (err, file) {
+            if (err) {
+                console.log('ERROR', err);
+                response.status(err.statusCode);
+            }
 
-                    ingredient.Quantity = parseFloat(ingredient.Quantity);
-                    var f = new Fraction(ingredient.Quantity);
-                    if (f.d === 10000) {
-                        var q = ingredient.Quantity;
-                        var whole = Math.trunc(q);
-                        var part = Math.round((q - whole) * 10000);
-                        if (part === 3333) {
-                            f = new Fraction((whole * 3) + 1, 3);
-                        }
-                        else if (part === 6667) {
-                            f = new Fraction((whole * 3) + 2, 3);
-                        }
-                    }
-
-                    ingredient.QuantityFraction = f.toFraction(true);
-                    ingredient.Section = ingredient.Section === null ? 0 : ingredient.Section;
-                    ingredient.Unit = units.find((unit) => unit.Code === ingredient.UnitCode);
-                    return ingredient;
-                });
-                
-                row.IngredientGroups = groupArray(row.Ingredients, 'Section');
-                row.Directions = row.Directions
-                    .map((direction) => direction.dataValues)
-                    .sort(function (a, b) { return a.Step - b.Step; });
-                
-                row.Ingredients.forEach(function (ingredient) {
-                    ingredient.Section = !isNaN(ingredient.Section) ? null : ingredient.Section;
-                });
-            });
+            var tmpl = jsrender.templates(file);
+            var html = tmpl.render(data);
             
-            fs.readFile(__dirname + '/client/index.html', 'utf8', function (err, data) {
-                if (err) {
-                    console.log('ERROR', err);
-                    response.status(err.statusCode);
-                }
-
-                var tmpl = jsrender.templates(data);
-                var html = tmpl.render({
-                    Units: units,
-                    Recipes: recipes
-                });
-                
-                console.log('SEND', __dirname + '/client/index.html');
-                response
-                    .status(200)
-                    .set('Content-Type', 'text/html')
-                    .send(html)
-                    .end();
-            });
+            console.log('SEND', __dirname + '/client/index.html');
+            response
+                .status(200)
+                .set('Content-Type', 'text/html')
+                .send(html)
+                .end();
         });
     });
 });
@@ -251,10 +261,16 @@ app.post('/saverecipe', bodyParser.urlencoded({ extended: true }), function (req
                 });
             });
         }).then(function (result) {
-            response.json(recipe);
+            response.status(200).end();
         }).catch(function (err) {
             console.log('ERROR', err);
         });
+    });
+});
+
+app.get('/getrecipes', function (request, response) {
+    GetRecipes().done(function (data) {
+        response.json(data.Recipes);
     });
 });
 
