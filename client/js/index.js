@@ -123,7 +123,7 @@ function RefreshRecipes(recipes) {
             
             // $('#editrecipe-recipeid').val(recipe.RecipeId || '');
             $('#editrecipe-uniqueid').val(recipe.UniqueId || '');
-            $('#editrecipe-name').val(recipe.Name || '');
+            $('#editrecipe-name').prop('readonly', !!recipe.RecipeId).val(recipe.Name || '');
             $('#editrecipe-preptime').val(recipe.PrepTime || '');
             $('#editrecipe-cooktime').val(recipe.CookTime || '');
             $('#editrecipe-totaltime').val(recipe.TotalTime || '');
