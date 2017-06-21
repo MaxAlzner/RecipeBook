@@ -53,7 +53,7 @@
         </div>
     </div>
     <div class="modal fade" id="EditRecipeModal" tabindex="-1" role="dialog" aria-labelledby="EditRecipeModalLabel">
-        <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-dialog modal-xl" role="document">
             <form id="editrecipe" class="modal-content" action="saverecipe" method="post" novalidate="novalidate">
                 <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
@@ -63,69 +63,67 @@
                     </h4>
                 </div>
                 <div class="modal-body">
-                    <div class="form-horizontal">
-                        <!--<input type="hidden" id="editrecipe-recipeid" name="recipe[RecipeId]" />-->
-                        <input type="hidden" id="editrecipe-uniqueid" name="recipe[UniqueId]" />
-                        <!--<input type="hidden" id="editrecipe-revision" name="recipe[Revision]" />-->
-                        <input type="hidden" id="editrecipe-createdate" name="recipe[CreateDate]" />
-                        <div class="form-group">
-                            <label for="editrecipe-name" class="col-sm-3 control-label">Name</label>
-                            <div class="col-sm-9">
-                                <input type="text" id="editrecipe-name" class="form-control" name="recipe[Name]" required="required" maxlength="256" spellcheck="true" />
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label for="editrecipe-servings" class="col-sm-3 control-label">Servings</label>
-                            <div class="col-sm-9">
-                                <input type="number" id="editrecipe-servings" class="form-control" name="recipe[Servings]" min="1" />
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label for="editrecipe-calories" class="col-sm-3 control-label">Calories</label>
-                            <div class="col-sm-9">
-                                <input type="number" id="editrecipe-calories" class="form-control" name="recipe[Calories]" min="0" />
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label for="editrecipe-preptime" class="col-sm-3 control-label">Prep (min)</label>
-                            <div class="col-sm-9">
-                                <input type="number" id="editrecipe-preptime" class="form-control" name="recipe[PrepTime]" min="0" />
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label for="editrecipe-cooktime" class="col-sm-3 control-label">Cook (min)</label>
-                            <div class="col-sm-9">
-                                <input type="number" id="editrecipe-cooktime" class="form-control" name="recipe[CookTime]" min="0" />
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label for="editrecipe-totaltime" class="col-sm-3 control-label">Total (min)</label>
-                            <div class="col-sm-9">
-                                <input type="number" id="editrecipe-totaltime" class="form-control" name="recipe[TotalTime]" min="0" />
-                            </div>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label for="editrecipe-notes" class="control-label">Notes</label>
-                        <textarea id="editrecipe-notes" class="form-control" name="recipe[Notes]" maxlength="1024" spellcheck="true"></textarea>
-                    </div>
+                    <input type="hidden" id="editrecipe-uniqueid" name="recipe[UniqueId]" />
+                    <input type="hidden" id="editrecipe-createdate" name="recipe[CreateDate]" />
                     <div class="row">
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <fieldset>
-                                    <legend class="h4">Ingredients<button type="button" id="editrecipe-addingredient" class="btn btn-success btn-xs pull-right"><span class="glyphicon glyphicon-plus"></span></button></legend>
-                                    <div id="ingredients">
-                                        <div id="ingredients-empty" class="text-muted">There are no ingredients.</div>
+                        <div class="col-lg-7 col-md-6">
+                            <div class="form-horizontal">
+                                <div class="form-group">
+                                    <label for="editrecipe-name" class="col-sm-3 control-label">Name</label>
+                                    <div class="col-sm-9">
+                                        <input type="text" id="editrecipe-name" class="form-control" name="recipe[Name]" required="required" maxlength="256" spellcheck="true" />
                                     </div>
-                                </fieldset>
+                                </div>
+                                <div class="form-group">
+                                    <label for="editrecipe-servings" class="col-sm-3 control-label">Servings</label>
+                                    <div class="col-sm-9">
+                                        <input type="number" id="editrecipe-servings" class="form-control" name="recipe[Servings]" min="1" />
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="editrecipe-calories" class="col-sm-3 control-label">Calories</label>
+                                    <div class="col-sm-9">
+                                        <input type="number" id="editrecipe-calories" class="form-control" name="recipe[Calories]" min="0" />
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="editrecipe-preptime" class="col-sm-3 control-label">Prep (min)</label>
+                                    <div class="col-sm-9">
+                                        <input type="number" id="editrecipe-preptime" class="form-control" name="recipe[PrepTime]" min="0" />
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="editrecipe-cooktime" class="col-sm-3 control-label">Cook (min)</label>
+                                    <div class="col-sm-9">
+                                        <input type="number" id="editrecipe-cooktime" class="form-control" name="recipe[CookTime]" min="0" />
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="editrecipe-totaltime" class="col-sm-3 control-label">Total (min)</label>
+                                    <div class="col-sm-9">
+                                        <input type="number" id="editrecipe-totaltime" class="form-control" name="recipe[TotalTime]" min="0" />
+                                    </div>
+                                </div>
                             </div>
-                        </div>
-                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="editrecipe-notes" class="control-label">Notes</label>
+                                <textarea id="editrecipe-notes" class="form-control" name="recipe[Notes]" maxlength="1024" spellcheck="true"></textarea>
+                            </div>
                             <div class="form-group">
                                 <fieldset>
                                     <legend class="h4">Directions<button type="button" id="editrecipe-adddirection" class="btn btn-success btn-xs pull-right"><span class="glyphicon glyphicon-plus"></span></button></legend>
                                     <div id="directions">
                                         <div id="directions-empty" class="text-muted">There are no directions.</div>
+                                    </div>
+                                </fieldset>
+                            </div>
+                        </div>
+                        <div class="col-lg-5 col-md-6">
+                            <div class="form-group">
+                                <fieldset>
+                                    <legend class="h4">Ingredients<button type="button" id="editrecipe-addingredient" class="btn btn-success btn-xs pull-right"><span class="glyphicon glyphicon-plus"></span></button></legend>
+                                    <div id="ingredients">
+                                        <div id="ingredients-empty" class="text-muted">There are no ingredients.</div>
                                     </div>
                                 </fieldset>
                             </div>
