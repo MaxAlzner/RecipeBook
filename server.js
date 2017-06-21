@@ -157,11 +157,11 @@ function GetRecipes() {
                     Units: units    
                 });
             }).catch(function (err) {
-                console.log('ERROR', err);
+                HandleError(err);
                 reject();
             });
         }).catch(function (err) {
-            console.log('ERROR', err);
+            HandleError(err);
             reject();
         });
     });
@@ -185,8 +185,6 @@ app.get('/', function (request, response) {
 
             var tmpl = jsrender.templates(file);
             var html = tmpl.render(data);
-            
-            console.log('SEND', __dirname + '/client/index.html');
             response
                 .status(200)
                 .set('Content-Type', 'text/html')
