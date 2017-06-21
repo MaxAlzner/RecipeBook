@@ -72,6 +72,25 @@ function RefreshRecipes(recipes) {
         }
     });
     
+    $.validator.addMethod('fraction', function (value, element) {
+        var check;
+        try {
+            var f = new Fraction(value);
+            check = !isNaN(f.n) && !isNaN(f.d);
+        }
+        catch (e) {
+            check = false;
+        }
+        
+        return this.optional(element) || check;
+    }, 'Please enter a valid fraction.');
+    
+    $.validator.addClassRules({
+        fraction: {
+            fraction: true
+        }
+    });
+    
     $.views.tags({
         html: function (val) {
             return (val || '').replace(/\n/g, '<br />');
@@ -235,22 +254,10 @@ function RefreshRecipes(recipes) {
                 this.name = 'recipe[Ingredients][' + index + '][Section]';
             });
         })
-        .on('focusout', '.ingredient-quantity', function () {
-            var v = parseFloat(this.value);
-            var f = new Fraction(v);
-            if (f.d === 10000) {
-                var whole = Math.trunc(v);
-                var part = Math.round((v - whole) * 10000);
-                if (part === 3333) {
-                    f = new Fraction((whole * 3) + 1, 3);
-                }
-                else if (part === 6667) {
-                    f = new Fraction((whole * 3) + 2, 3);
-                }
-            }
-            
-            $('#' + this.id + '-fraction').val(isNaN(v) ? '' : f.toFraction(true));
-        })
+        // .on('focusout', '.ingredient-quantity', function () {
+        //     var f = this.value.length > 0 ? new Fraction(this.value) : null;
+        //     $('#' + this.id + '-fraction').val(isNaN(v) ? '' : f.toFraction(true));
+        // })
         .on('focusout', '.ingredient-section', function () {
             var options = Array.from(new Set($('#ingredients .ingredient-section').map(function () {
                 return this.value;

@@ -79,7 +79,7 @@ const db = {
             references: 'Unit',
             referencesKey: 'Code'
         },
-        Quantity: Sequelize.DECIMAL,
+        Quantity: Sequelize.STRING,
         Section: Sequelize.STRING
     }),
     Direction: connection.define('Direction', {
@@ -127,22 +127,6 @@ function GetRecipes() {
                     row.CreateDate = row.CreateDate.toLocaleString();
                     row.Ingredients = row.Ingredients.map(function (ingredient) {
                         ingredient = ingredient.dataValues;
-
-                        ingredient.Quantity = parseFloat(ingredient.Quantity);
-                        var f = new Fraction(ingredient.Quantity);
-                        if (f.d === 10000) {
-                            var q = ingredient.Quantity;
-                            var whole = Math.trunc(q);
-                            var part = Math.round((q - whole) * 10000);
-                            if (part === 3333) {
-                                f = new Fraction((whole * 3) + 1, 3);
-                            }
-                            else if (part === 6667) {
-                                f = new Fraction((whole * 3) + 2, 3);
-                            }
-                        }
-
-                        ingredient.QuantityFraction = f.toFraction(true);
                         ingredient.Section = ingredient.Section === null ? 0 : ingredient.Section;
                         ingredient.Unit = units.find((unit) => unit.Code === ingredient.UnitCode);
                         return ingredient;

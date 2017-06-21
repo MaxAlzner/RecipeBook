@@ -44,7 +44,7 @@ CREATE TABLE Ingredient
     RecipeId INT NOT NULL,
     `Name` VARCHAR(256) NOT NULL,
     UnitCode VARCHAR(4) NOT NULL,
-    Quantity DECIMAL(8,4) NOT NULL,
+    Quantity VARCHAR(16) NOT NULL,
     Section VARCHAR(64) NULL,
     
     CONSTRAINT PK_Ingredient PRIMARY KEY (IngredientId),

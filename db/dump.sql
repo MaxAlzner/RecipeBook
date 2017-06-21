@@ -20,14 +20,14 @@ VALUES
 	(1, UUID(), 'Pecan Pie', 15, 40, 65, 8, 313, 'Aluminum foil can be used to keep food moist, cook it evenly, and make clean-up easier.', 1, NOW());
 INSERT INTO Ingredient(RecipeId, `Name`, UnitCode, Quantity, Section)
 VALUES
-	(1, 'light brown sugar', 'CUP', 1, NULL),
-	(1, 'white sugar', 'CUP', 0.25, NULL),
-	(1, 'butter', 'CUP', 0.5, NULL),
-	(1, 'eggs', 'EA', 2, NULL),
-	(1, 'all-purpose flour', 'CUP', 1, NULL),
-	(1, 'milk', 'TBSP', 1, NULL),
-	(1, 'vanilla extract', 'TSP', 1, NULL),
-	(1, 'chopped pecans', 'CUP', 1, NULL);
+	(1, 'light brown sugar', 'CUP', '1', NULL),
+	(1, 'white sugar', 'CUP', '1/4', NULL),
+	(1, 'butter', 'CUP', '1/2', NULL),
+	(1, 'eggs', 'EA', '2', NULL),
+	(1, 'all-purpose flour', 'CUP', '1', NULL),
+	(1, 'milk', 'TBSP', '1', NULL),
+	(1, 'vanilla extract', 'TSP', '1', NULL),
+	(1, 'chopped pecans', 'CUP', '1', NULL);
 INSERT INTO Direction(RecipeId, Step, Description)
 VALUES
 	(1, 1, 'Preheat oven to 400 degrees F (205 degrees C).'),
@@ -40,10 +40,10 @@ VALUES
     (2, UUID(), 'Butter Flaky Pie Crust', 15, NULL, 15, 8, 173, 'Aluminum foil can be used to keep food moist, cook it evenly, and make clean-up easier.', 1, NOW());
 INSERT INTO Ingredient(RecipeId, `Name`, UnitCode, Quantity, Section)
 VALUES
-	(2, 'all-purpose flour', 'CUP', 1.25, NULL),
-    (2, 'salt', 'TSP', 0.25, NULL),
-    (2, 'butter, chilled and diced', 'CUP', 0.5, NULL),
-    (2, 'ice water', 'CUP', 0.25, NULL);
+	(2, 'all-purpose flour', 'CUP', '1 1/4', NULL),
+    (2, 'salt', 'TSP', '1/4', NULL),
+    (2, 'butter, chilled and diced', 'CUP', '1/2', NULL),
+    (2, 'ice water', 'CUP', '1/4', NULL);
 INSERT INTO Direction(RecipeId, Step, Description)
 VALUES
 	(2, 1, 'In a large bowl, combine flour and salt. Cut in butter until mixture resembles coarse crumbs. Stir in water, a tablespoon at a time, until mixture forms a ball. Wrap in plastic and refrigerate for 4 hours or overnight.'),
@@ -55,17 +55,17 @@ VALUES
     (3, UUID(), 'Bran Muffins', 20, 20, 40, 12, 167, NULL, 1, NOW());
 INSERT INTO Ingredient(RecipeId, `Name`, UnitCode, Quantity, Section)
 VALUES
-	(3, 'wheat bran', 'CUP', 1.5, NULL),
-    (3, 'buttermilk', 'CUP', 1, NULL),
-    (3, 'vegetable oil', 'CUP', 0.3333, NULL),
-	(3, 'eggs', 'EA', 1, NULL),
-    (3, 'brown sugar', 'CUP', 0.6667, NULL),
-    (3, 'vanilla extract', 'TSP', 0.5, NULL),
-    (3, 'all-purpose flour', 'CUP', 1, NULL),
-    (3, 'baking soda', 'TSP', 1, NULL),
-    (3, 'baking powder', 'TSP', 1, NULL),
-    (3, 'salt', 'TSP', 0.5, NULL),
-    (3, 'raisins', 'CUP', 0.5, NULL);
+	(3, 'wheat bran', 'CUP', '1 1/2', NULL),
+    (3, 'buttermilk', 'CUP', '1', NULL),
+    (3, 'vegetable oil', 'CUP', '1/3', NULL),
+	(3, 'eggs', 'EA', '1', NULL),
+    (3, 'brown sugar', 'CUP', '2/3', NULL),
+    (3, 'vanilla extract', 'TSP', '1/2', NULL),
+    (3, 'all-purpose flour', 'CUP', '1', NULL),
+    (3, 'baking soda', 'TSP', '1', NULL),
+    (3, 'baking powder', 'TSP', '1', NULL),
+    (3, 'salt', 'TSP', '1/2', NULL),
+    (3, 'raisins', 'CUP', '1/2', NULL);
 INSERT INTO Direction(RecipeId, Step, Description)
 VALUES
 	(3, 1, 'Preheat oven to 375 degrees F (190 degrees C). Grease muffin cups or line with paper muffin liners.'),
@@ -79,13 +79,13 @@ VALUES
     (4, UUID(), 'Banana Bread', 15, 65, 120, 12, 229, 'Aluminum foil can be used to keep food moist, cook it evenly, and make clean-up easier.', 1, NOW());
 INSERT INTO Ingredient(RecipeId, `Name`, UnitCode, Quantity, Section)
 VALUES
-	(4, 'all-purpose flour', 'CUP', 2, NULL),
-    (4, 'baking soda', 'TSP', 1, NULL),
-    (4, 'salt', 'TSP', 1, NULL),
-    (4, 'butter', 'CUP', 0.5, NULL),
-    (4, 'brown sugar', 'CUP', 0.75, NULL),
-    (4, 'eggs, beaten', 'EA', 2, NULL),
-    (4, 'mashed overripe bananas', 'CUP', 2.3333, NULL);
+	(4, 'all-purpose flour', 'CUP', '2', NULL),
+    (4, 'baking soda', 'TSP', '1', NULL),
+    (4, 'salt', 'TSP', '1', NULL),
+    (4, 'butter', 'CUP', '1/2', NULL),
+    (4, 'brown sugar', 'CUP', '3/4', NULL),
+    (4, 'eggs, beaten', 'EA', '2', NULL),
+    (4, 'mashed overripe bananas', 'CUP', '2 1/3', NULL);
 INSERT INTO Direction(RecipeId, Step, Description)
 VALUES
 	(4, 1, 'Preheat oven to 350 degrees F (175 degrees C). Lightly grease a 9x5 inch loaf pan.'),
@@ -98,19 +98,19 @@ VALUES
 	(5, UUID(), 'Brownies', 25, 35, 60, 16, 183, NULL, 1, NOW());
 INSERT INTO Ingredient(RecipeId, `Name`, UnitCode, Quantity, Section)
 VALUES
-	(5, 'butter', 'CUP', 0.5, NULL),
-    (5, 'white sugar', 'CUP', 1, NULL),
-    (5, 'eggs', 'EA', 2, NULL),
-    (5, 'vanilla extract', 'TSP', 1, NULL),
-    (5, 'unsweetened cocoa powder', 'CUP', 0.3333, NULL),
-    (5, 'all-purpose flour', 'CUP', 0.5, NULL),
-    (5, 'salt', 'TSP', 0.25, NULL),
-    (5, 'baking powder', 'TSP', 0.25, NULL),
-    (5, 'butter, softened', 'TBSP', 3, 'Frosting'),
-    (5, 'unsweetened cocoa powder', 'TBSP', 3, 'Frosting'),
-    (5, 'honey', 'TBSP', 1, 'Frosting'),
-    (5, 'vanilla extract', 'TSP', 1, 'Frosting'),
-    (5, 'confectioners\' sugar', 'CUP', 1, 'Frosting');
+	(5, 'butter', 'CUP', '1/2', NULL),
+    (5, 'white sugar', 'CUP', '1', NULL),
+    (5, 'eggs', 'EA', '2', NULL),
+    (5, 'vanilla extract', 'TSP', '1', NULL),
+    (5, 'unsweetened cocoa powder', 'CUP', '1/3', NULL),
+    (5, 'all-purpose flour', 'CUP', '1/2', NULL),
+    (5, 'salt', 'TSP', '1/4', NULL),
+    (5, 'baking powder', 'TSP', '1/4', NULL),
+    (5, 'butter, softened', 'TBSP', '3', 'Frosting'),
+    (5, 'unsweetened cocoa powder', 'TBSP', '3', 'Frosting'),
+    (5, 'honey', 'TBSP', '1', 'Frosting'),
+    (5, 'vanilla extract', 'TSP', '1', 'Frosting'),
+    (5, 'confectioners\' sugar', 'CUP', '1', 'Frosting');
 INSERT INTO Direction(RecipeId, Step, Description)
 VALUES
 	(5, 1, 'Preheat oven to 350 degrees F (175 degrees C). Grease and flour an 8-inch square pan.'),
