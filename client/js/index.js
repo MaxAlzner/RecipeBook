@@ -101,7 +101,6 @@ function RefreshRecipes(recipes) {
         .on('click', 'a', function (e) {
             e.preventDefault();
             var group = $(this).attr('data-group');
-            console.log($('#recipelist [data-group="' + group + '"]'));
             if (group) {
                 $('html, body').animate({
                     scrollTop: $('#recipelist [data-group="' + group + '"]').position().top
