@@ -254,10 +254,6 @@ function RefreshRecipes(recipes) {
                 this.name = 'recipe[Ingredients][' + index + '][Section]';
             });
         })
-        // .on('focusout', '.ingredient-quantity', function () {
-        //     var f = this.value.length > 0 ? new Fraction(this.value) : null;
-        //     $('#' + this.id + '-fraction').val(isNaN(v) ? '' : f.toFraction(true));
-        // })
         .on('focusout', '.ingredient-section', function () {
             var options = Array.from(new Set($('#ingredients .ingredient-section').map(function () {
                 return this.value;
