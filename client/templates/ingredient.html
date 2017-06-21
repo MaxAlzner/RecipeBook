@@ -21,13 +21,21 @@
                 <div class="form-group form-group-sm">
                     <label for="ingredient{{:i}}-quantity" class="col-sm-3 control-label">Quantity</label>
                     <div class="col-sm-9">
-                        <input type="number" id="ingredient{{:i}}-quantity" class="form-control ingredient-quantity" name="recipe[Ingredients][][Quantity]" value="{{:Ingredient.Quantity}}" required="required" min="0" />
+                        <div class="row">
+                            <div class="col-sm-8">
+                                <input type="number" id="ingredient{{:i}}-quantity" class="form-control ingredient-quantity" name="recipe[Ingredients][][Quantity]" value="{{:Ingredient.Quantity}}" required="required" min="0" />
+                            </div>
+                            <div class="col-sm-4">
+                                <input type="text" id="ingredient{{:i}}-quantity-fraction" class="form-control ignore" value="{{:Ingredient.QuantityFraction}}" readonly />
+                            </div>
+                        </div>
                     </div>
                 </div>
                 <div class="form-group form-group-sm">
                     <label for="ingredient{{:i}}-section" class="col-sm-3 control-label">Section</label>
                     <div class="col-sm-9">
-                        <input type="text" id="ingredient{{:i}}-section" class="form-control ingredient-section" name="recipe[Ingredients][][Section]" value="{{:Ingredient.Section}}" maxlength="64" spellcheck="true" />
+                        <input type="text" id="ingredient{{:i}}-section" class="form-control ingredient-section" name="recipe[Ingredients][][Section]" value="{{:Ingredient.Section}}" maxlength="64" spellcheck="true" list="ingredient{{:i}}-section-list" />
+                        <datalist id="ingredient{{:i}}-section-list" class="ingredient-section-list"></datalist>
                     </div>
                 </div>
             </div>

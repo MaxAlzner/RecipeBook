@@ -1,4 +1,4 @@
-/*globals $ */
+/*globals $, Fraction */
 
 function FindRecipe(id) {
     var recipes = JSON.parse($('#recipes').val() || '[]'), recipe;
@@ -234,6 +234,32 @@ function RefreshRecipes(recipes) {
             $('#ingredients .ingredient-section').each(function (index) {
                 this.name = 'recipe[Ingredients][' + index + '][Section]';
             });
+        })
+        .on('focusout', '.ingredient-quantity', function () {
+            var v = parseFloat(this.value);
+            var f = new Fraction(v);
+            if (f.d === 10000) {
+                var whole = Math.trunc(v);
+                var part = Math.round((v - whole) * 10000);
+                if (part === 3333) {
+                    f = new Fraction((whole * 3) + 1, 3);
+                }
+                else if (part === 6667) {
+                    f = new Fraction((whole * 3) + 2, 3);
+                }
+            }
+            
+            $('#' + this.id + '-fraction').val(isNaN(v) ? '' : f.toFraction(true));
+        })
+        .on('focusout', '.ingredient-section', function () {
+            var options = Array.from(new Set($('#ingredients .ingredient-section').map(function () {
+                return this.value;
+            }).toArray()));
+            $('.ingredient-section-list').empty().append(options.filter(function (val) {
+                return val.length > 0;
+            }).map(function (val) {
+                return '<option value="' + val + '" />';
+            }));
         });
     $('#directions')
         .on('editrecipe.reorder', function () {
