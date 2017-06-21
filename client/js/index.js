@@ -139,7 +139,6 @@ function RefreshRecipes(recipes) {
                 $('#editrecipe-edittitle').hide();
             }
             
-            // $('#editrecipe-recipeid').val(recipe.RecipeId || '');
             $('#editrecipe-uniqueid').val(recipe.UniqueId || '');
             $('#editrecipe-name').prop('readonly', !!recipe.RecipeId).val(recipe.Name || '');
             $('#editrecipe-preptime').val(recipe.PrepTime || '');
@@ -148,8 +147,6 @@ function RefreshRecipes(recipes) {
             $('#editrecipe-servings').val(recipe.Servings || '');
             $('#editrecipe-calories').val(recipe.Calories || '');
             $('#editrecipe-notes').val(recipe.Notes || '');
-            // $('#editrecipe-revision').val(recipe.Revision || '');
-            $('#editrecipe-createdate').val(recipe.CreateDate || '');
             
             $('#ingredients-empty').hide().siblings().remove();
             if (recipe.Ingredients && recipe.Ingredients.length) {
@@ -253,6 +250,11 @@ function RefreshRecipes(recipes) {
             $('#ingredients .ingredient-section').each(function (index) {
                 this.name = 'recipe[Ingredients][' + index + '][Section]';
             });
+        })
+        .on('focusout', '.ingredient-quantity', function () {
+            if (this.value) {
+                $(this).val((new Fraction (this.value)).toFraction(true));
+            }
         })
         .on('focusout', '.ingredient-section', function () {
             var options = Array.from(new Set($('#ingredients .ingredient-section').map(function () {
