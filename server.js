@@ -113,15 +113,19 @@ jsrender.views.tags({
     }
 });
 
+function HandleError(err) {
+    console.log('ERROR', err);
+}
+
 function GetRecipes() {
     return new Promise(function (resolve, reject) {
         db.Unit.findAll({
             order: ['Name']
-        }).done(function (units) {
+        }).then(function (units) {
             units = units.map((node) => node.dataValues);
             db.Recipe.findAll({
                 include: [db.Ingredient, db.Direction]
-            }).done(function (result) {
+            }).then(function (result) {
                 var recipes = result.map((node) => node.dataValues);
                 recipes.forEach(function (row) {
                     row.CreateDate = row.CreateDate.toLocaleString();
@@ -152,17 +156,31 @@ function GetRecipes() {
                     Recipes: recipes,
                     Units: units    
                 });
+            }).catch(function (err) {
+                console.log('ERROR', err);
+                reject();
             });
+        }).catch(function (err) {
+            console.log('ERROR', err);
+            reject();
         });
     });
 }
+
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.json());
+app.use(function (err, request, response, next) {
+    HandleError(err);
+    response.status(500).send('An error has occurred.').end();
+});
 
 app.get('/', function (request, response) {
     GetRecipes().then(function (data) {
         fs.readFile(__dirname + '/client/index.html', 'utf8', function (err, file) {
             if (err) {
-                console.log('ERROR', err);
-                response.status(err.statusCode);
+                HandleError(err);
+                response.status(404).end();
+                return;
             }
 
             var tmpl = jsrender.templates(file);
@@ -175,10 +193,16 @@ app.get('/', function (request, response) {
                 .send(html)
                 .end();
         });
+    }).catch(function () {
+        response.redirect('/error');
     });
 });
 
-app.post('/saverecipe', bodyParser.urlencoded({ extended: true }), function (request, response) {
+app.get('/error', function(request, response) {
+    response.status(500).sendFile(__dirname + '/error/500.html');
+});
+
+app.post('/saverecipe', function (request, response) {
     var recipe = request.body.recipe;
     if (!recipe) {
         response.status(500).send('No data sent.').end();
@@ -234,7 +258,7 @@ app.post('/saverecipe', bodyParser.urlencoded({ extended: true }), function (req
         attributes: ['Revision'],
         where: { UniqueId: recipe.UniqueId },
         order: [['Revision', 'DESC']]
-    }).done(function (rev) {
+    }).then(function (rev) {
         rev = (rev ? rev.dataValues.Revision : 0) + 1;
         // console.log('Saving Recipe', 'Revision: ', rev);
         recipe.Revision = rev;
@@ -252,27 +276,27 @@ app.post('/saverecipe', bodyParser.urlencoded({ extended: true }), function (req
         }).then(function (result) {
             response.json(recipe);
         }).catch(function (err) {
-            console.log('ERROR', err);
+            HandleError(err);
+            response.redirect('/error');
         });
+    }).catch(function (err) {
+        HandleError(err);
+        response.redirect('/error');
     });
 });
 
 app.get('/getrecipes', function (request, response) {
-    GetRecipes().done(function (data) {
+    GetRecipes().then(function (data) {
         response.json(data.Recipes);
+    }).catch(function (err) {
+        HandleError(err);
+        response.redirect('/error');
     });
 });
 
 app.get(new RegExp('^.*\.(' + whitelist.join('|') + ')$'), function (request, response) {
-  console.log('SEND', __dirname + '/client' + request.originalUrl);
-  response.sendFile(__dirname + '/client' + request.originalUrl, function (err) {
-      if (err) {
-          console.log('ERROR', err);
-          response.status(err.statusCode);
-      }
-      
-      response.end();
-  });
+    console.log('SEND', __dirname + '/client' + request.originalUrl);
+    response.sendFile(__dirname + '/client' + request.originalUrl);
 });
 
 var server = app.listen(process.env.PORT || 3000, process.env.IP || '127.0.0.1', function() {
