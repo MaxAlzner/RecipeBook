@@ -81,6 +81,21 @@ function RefreshRecipes(recipes) {
     var units = JSON.parse($('#units').val() || '[]');
     
     RefreshRecipes(JSON.parse($('#recipes').val() || '[]'));
+
+    $(window)
+        .on('scroll', function (e) {
+            var element = $('.recipe:visible').filter(function () {
+                return $(this).offset().top >= window.pageYOffset;
+            })
+            .toArray()
+            .sort(function (a, b) {
+                return $(a).offset().top - $(b).offset().top;
+            })[0];
+            var highlight = $(element).attr('data-name').toUpperCase().charAt(0);
+            $('#pager li.active').removeClass('active');
+            $('#pager li > a[data-char="' + highlight + '"]').parent().addClass('active');
+        })
+        .trigger('scroll');
     
     $('#pager')
         .on('click', 'a', function (e) {

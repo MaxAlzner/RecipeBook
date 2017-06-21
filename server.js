@@ -257,7 +257,7 @@ app.post('/saverecipe', bodyParser.urlencoded({ extended: true }), function (req
         
         connection.transaction(function (t) {
             return db.Recipe.create(recipe, { transaction: t }).then(function (result) {
-                console.log('New Recipe ID: ', result.null);
+                // console.log('New Recipe ID: ', result.null);
                 recipe.Ingredients.forEach((ingredient) => ingredient.RecipeId = result.null);
                 recipe.Directions.forEach((direction) => direction.RecipeId = result.null);
                 
@@ -266,7 +266,6 @@ app.post('/saverecipe', bodyParser.urlencoded({ extended: true }), function (req
                 });
             });
         }).then(function (result) {
-            // response.status(200).end();
             response.json(recipe);
         }).catch(function (err) {
             console.log('ERROR', err);
