@@ -58,7 +58,7 @@ var Recipes = (function () {
     var units = JSON.parse($('#units').val() || '[]');
     
     Recipes.Draw(JSON.parse($('#recipes').val() || '[]'));
-
+    
     $(window)
         .on('scroll', function (e) {
             var element = $('.recipe:visible').filter(function () {
@@ -109,7 +109,7 @@ var Recipes = (function () {
             });
             return false;
         });
-        
+    
     $('#EditRecipeModal')
         .on('editrecipe.load', function (e, recipe) {
             if (recipe.RecipeId) {
@@ -267,6 +267,7 @@ var Recipes = (function () {
                 .prop('src', '/data/' + data.id + '/photo/' + data.image)
                 .prop('alt', data.image);
         });
+    
     $('#UploadImageModal')
         .on('uploadimage.load', function (e, recipe) {
             $('#uploadimage-uniqueid').val(recipe.UniqueId || '');
