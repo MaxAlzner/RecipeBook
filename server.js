@@ -333,7 +333,7 @@ app.delete('/data/:uid/photo/:image', function(request, response) {
     }
 });
 
-app.post('/upload/:uid', function (request, response) {
+app.put('/data/:uid/photo', function (request, response) {
     if (!request.params.uid) {
         response.status(500).send('Recipe unique ID is required.').end();
     }

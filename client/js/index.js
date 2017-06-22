@@ -269,8 +269,8 @@ var Recipes = (function () {
             });
             
             $.ajax({
-                type: 'POST',
-                url: 'upload/' + $('#uploadimage-uniqueid').val(),
+                type: 'PUT',
+                url: 'data/' + $('#uploadimage-uniqueid').val() + '/photo',
                 contentType: false,
                 processData: false,
                 cache: false,
