@@ -166,7 +166,7 @@ function GetRecipes() {
                     var info = {};
                     var infoPath = __dirname + '/data/' + key + '/imageinfo.json';
                     if (fs.existsSync(infoPath)) {
-                        info = require(infoPath);
+                        info = JSON.parse(fs.readFileSync(infoPath));
                         var index = images.indexOf(info.primary);
                         if (info.primary && index >= 0) {
                             var primary = images[index];
