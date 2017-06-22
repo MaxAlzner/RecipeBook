@@ -23,6 +23,10 @@ if (!dbconfig) {
     console.error('Failed to find database connection settings.');
 }
 
+if (!fs.existsSync(__dirname + '/data')) {
+    fs.mkdirSync(__dirname + '/data');
+}
+
 var Sequelize = require('sequelize');
 
 var connection = new Sequelize(dbconfig.database, dbconfig.user, dbconfig.password, {
