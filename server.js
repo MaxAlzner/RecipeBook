@@ -152,25 +152,29 @@ function GetRecipes() {
                     });
                 });
                 recipes = groupArray(recipes.sort((a, b) => { return a.Name.localeCompare(b.Name); }), 'UniqueId');
+                
                 for (var key in recipes) {
                     recipes[key] = recipes[key].sort((a, b) => a.Revision - b.Revision);
                     
                     var images = dataFolders.indexOf(key) >= 0 ? fs.readdirSync(__dirname + '/data/' + key).filter(function (file) {
-                        return (new RegExp('^.*\.(.jpg|.jpeg|.png|.gif|.bmp|.ico|.svg|.svgz|.tif|.tiff)$')).test(file);
+                        return /^.*.(.jpg|.jpeg|.png|.gif|.bmp|.ico|.svg|.svgz|.tif|.tiff)$/.test(file);
                     }) : [];
-                    var imageInfoPath = __dirname + '/data/' + key + '/imageinfo.json';
-                    if (fs.existsSync(imageInfoPath)) {
-                        var imageInfo = require(imageInfoPath);
-                        var index = images.indexOf(imageInfo.primary);
-                        if (imageInfo.primary && index >= 0) {
+                    var info = {};
+                    var infoPath = __dirname + '/data/' + key + '/imageinfo.json';
+                    if (fs.existsSync(infoPath)) {
+                        info = require(infoPath);
+                        var index = images.indexOf(info.primary);
+                        if (info.primary && index >= 0) {
                             var primary = images[index];
                             images.splice(index, 1);
                             images.unshift(primary);
+                            images.Primary = true;
                         }
                     }
                     
                     recipes[key].forEach(function (row) {
                         row.Images = images;
+                        row.DataInfo = info;
                     });
                 }
                 
@@ -359,6 +363,22 @@ app.put('/data/:uid/photo', function (request, response) {
     form.parse(request);
 });
 
+app.post('/data/:uid/photo', function (request, response) {
+    LogRequest(request);
+    if (!request.params.uid) {
+        response.status(500).send('Recipe unique ID is required.').end();
+    }
+    
+    var folder = __dirname + '/data/' + request.params.uid;
+    if (!fs.existsSync(folder)) {
+        fs.mkdirSync(folder);
+    }
+    
+    fs.writeFileSync(folder + '/imageinfo.json', JSON.stringify(request.body));
+    
+    response.end();
+});
+
 app.get(new RegExp('^.*\.(' + whitelist.join('|') + ')$'), function (request, response) {
     LogRequest(request);
     response.sendFile(__dirname + '/client' + request.originalUrl);
@@ -366,5 +386,5 @@ app.get(new RegExp('^.*\.(' + whitelist.join('|') + ')$'), function (request, re
 
 var server = app.listen(process.env.PORT || 3000, process.env.IP || '127.0.0.1', function() {
   var addr = server.address();
-  console.log('Server running at', addr.address + ':' + addr.port);
+  console.log('Server running at', addr.address + ':' + addr.port + '\n');
 });

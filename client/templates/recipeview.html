@@ -31,11 +31,14 @@
                             </div>
                             <div class="media-body">
                                 <div id="recipes-images-{{:RecipeId}}" class="row">
-                                    {{for Images ~UniqueId=UniqueId}}
+                                    {{for Images ~info=DataInfo ~RecipeId=RecipeId ~UniqueId=UniqueId}}
                                     <div class="col-md-3 col-sm-4 col-xs-6" style="width: auto;">
                                         <button type="submit" class="btn btn-danger btn-xs recipe-photo-delete" formaction="/data/{{:~UniqueId}}/photo/{{:#data}}" style="position: absolute; top: 3px; right: 5px; border-radius: 12px;">
                                             <span class="glyphicon glyphicon-remove"></span>
                                         </button>
+                                        <span style="position: absolute; bottom: 25px; left: 25px;">
+                                            <input type="radio" class="recipe-photo-primary" name="recipe-image-{{:~RecipeId}}-primary" formaction="/data/{{:~UniqueId}}/photo" {{if ~info.primary === #data}}checked{{/if}} value="{{:#data}}" />
+                                        </span>
                                         <a href="#" class="thumbnail recipe-photo" data-id="{{:~UniqueId}}" data-image="{{:#data}}">
                                             <img src="/data/{{:~UniqueId}}/photo/{{:#data}}" alt="{{:#data}}" style="height: 160px;" />
                                         </a>

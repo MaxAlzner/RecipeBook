@@ -108,6 +108,13 @@ var Recipes = (function () {
                 }
             });
             return false;
+        })
+        .on('change', '.recipe-photo-primary', function () {
+            $.post(this.formAction, {
+                primary: this.value
+            }, function () {
+                Recipes.Refresh();
+            });
         });
     
     $('#EditRecipeModal')
