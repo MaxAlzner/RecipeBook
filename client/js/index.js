@@ -1,46 +1,63 @@
 /*globals $, Fraction */
 
-function FindRecipe(id) {
-    var recipes = JSON.parse($('#recipes').val() || '[]'), recipe;
-    Object.values(recipes).forEach(function (group) {
-        recipe = recipe || group.find(function (recipe) {
-            return recipe.RecipeId === id;
-        });
-    });
-    return recipe;
-}
-
-function RefreshRecipes(recipes) {
-    var alph = {};
-    Object.values(JSON.parse($('#recipes').val() || '[]'))
-        .reduce(function (acc, val) { return acc.concat(val); }, [])
-        .forEach(function (recipe) {
-            var ch = recipe.Name.toUpperCase().charAt(0);
-            ch = !!ch.match(/[A-Z]/i) ? ch : '#';
-            if (alph[ch] === undefined) {
-                alph[ch] = recipe.UniqueId;
+var Recipes = (function () {
+    'use strict';
+    return {
+        Find: function (id) {
+            id = typeof id === 'string' ? parseInt(id, 10) : id;
+            var recipes = JSON.parse($('#recipes').val() || '[]'), recipe;
+            Object.values(recipes).forEach(function (group) {
+                recipe = recipe || group.find(function (recipe) {
+                    return recipe.RecipeId === id;
+                });
+            });
+            return recipe;
+        },
+        
+        Draw: function (recipes) {
+            var alpha = {};
+            Object.values(JSON.parse($('#recipes').val() || '[]'))
+                .reduce(function (acc, val) { return acc.concat(val); }, [])
+                .forEach(function (recipe) {
+                    var ch = recipe.Name.toUpperCase().charAt(0);
+                    ch = !!ch.match(/[A-Z]/i) ? ch : '#';
+                    if (alpha[ch] === undefined) {
+                        alpha[ch] = recipe.UniqueId;
+                    }
+                });
+            
+            $('#recipes').val(JSON.stringify(recipes));
+            $('#recipelist').empty().append($('#RecipeViewTemplate').render(recipes));
+            
+            $('#pager li').addClass('disabled');
+            $('#pager [data-group]').removeAttr('data-group');
+            for (var ch in alpha) {
+                $('#pager li > a[data-char="' + ch + '"]')
+                    .attr('data-group', alpha[ch])
+                    .parent()
+                    .removeClass('disabled');
             }
-        });
-    
-    $('#recipes').val(JSON.stringify(recipes));
-    $('#recipelist').empty().append($('#RecipeViewTemplate').render(recipes));
-    
-    $('#pager li').addClass('disabled');
-    $('#pager [data-group]').removeAttr('data-group');
-    for (var ch in alph) {
-        $('#pager li > a[data-char="' + ch + '"]')
-            .attr('data-group', alph[ch])
-            .parent()
-            .removeClass('disabled');
-    }
-}
+        },
+        Refresh: function () {
+            var defer = $.Deferred();
+            $.get('getrecipes', function (response) {
+                $('#recipes').val(JSON.stringify(response));
+                Recipes.Draw(response);
+                defer.resolve();
+            }).fail(function () {
+                defer.reject();
+            });
+            return defer.promise();
+        }
+    };
+}());
 
 (function () {
     'use strict';
     
     var units = JSON.parse($('#units').val() || '[]');
     
-    RefreshRecipes(JSON.parse($('#recipes').val() || '[]'));
+    Recipes.Draw(JSON.parse($('#recipes').val() || '[]'));
 
     $(window)
         .on('scroll', function (e) {
@@ -72,6 +89,17 @@ function RefreshRecipes(recipes) {
     $('#recipelist')
         .on('click', '.recipe-photo', function (e) {
             e.preventDefault();
+            return false;
+        })
+        .on('submit', '.recipe-photo-delete', function (e) {
+            e.preventDefault();
+            $.ajax({
+                url: this.action,
+                type: 'DELETE',
+                success: function () {
+                    Recipes.Refresh();
+                }
+            });
             return false;
         });
         
@@ -131,16 +159,14 @@ function RefreshRecipes(recipes) {
             $('#editrecipe textarea').css('height', '');
         });
     $('#editrecipe')
-        .submit(function (e) {
+        .on('submit', function (e) {
             e.preventDefault();
             $('#EditRecipeSaveFailure').hide();
             if ($(this).valid()) {
-                $.post(this.action, $(this).serialize(), function (response) {
-                    $.get('getrecipes', function (response) {
-                        $('#recipes').val(JSON.stringify(response));
+                $.post(this.action, $(this).serialize(), function () {
+                    Recipes.Refresh().done(function () {
                         $('#EditRecipeModal')
                             .modal('hide');
-                        RefreshRecipes(response);
                     });
                 })
                 .fail(function () {
@@ -229,7 +255,43 @@ function RefreshRecipes(recipes) {
     
     $('#UploadImageModal')
         .on('uploadimage.load', function (e, recipe) {
+            $('#uploadimage-uniqueid').val(recipe.UniqueId || '');
         })
         .on('show.bs.modal', function () {
+            $('#uploadimage-progress > .progress-bar').attr('aria-valuenow', 0).css('width', '0%');
+            $('#uploadimage-file').val(null);
+        });
+    $('#uploadimage-file')
+        .change(function (e) {
+            var data = new FormData();
+            $.each(this.files, function (index, file) {
+                data.append('file[' + index + ']', file);
+            });
+            
+            $.ajax({
+                type: 'POST',
+                url: 'upload/' + $('#uploadimage-uniqueid').val(),
+                contentType: false,
+                processData: false,
+                cache: false,
+                data: data,
+                xhr: function () {
+                    var xhr = $.ajaxSettings.xhr();
+                    if (xhr.upload) {
+                        xhr.upload.addEventListener('progress', function (e) {
+                            var percentage = Math.round((e.loaded * 100) / e.total);
+                            $('#uploadimage-progress > .progress-bar').attr('aria-valuenow', percentage).css('width', percentage + '%');
+                        }, false);
+                    }
+                    return xhr;
+                },
+                success: function (response) {
+                    $('#uploadimage-progress > .progress-bar').attr('aria-valuenow', 100).css('width', '100%');
+                    Recipes.Refresh().done(function () {
+                        $('#UploadImageModal')
+                            .modal('hide');
+                    });
+                }
+            });
         });
 }());

@@ -6,6 +6,7 @@
   "dependencies": {
     "body-parser": "^1.17.2",
     "express": "^4.15.3",
+    "formidable": "^1.1.1",
     "fraction.js": "^4.0.1",
     "fs": "0.0.1-security",
     "group-array": "^0.3.3",

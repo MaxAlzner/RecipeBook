@@ -13,7 +13,7 @@
                     <div class="recipe" data-recipe="{{:RecipeId}}" data-name="{{:Name}}">
                         <h3>{{:Name}}</h3>
                         <div class="media">
-                            <div class="media-left media-middle">
+                            <div class="media-left">
                                 <dl class="dl-horizontal" style="margin-right: 60px;">
                                     <dt>Prep</dt>
                                     <dd>{{:PrepTime}}</dd>
@@ -31,6 +31,11 @@
                                 <div id="recipes-images-{{:RecipeId}}" class="row">
                                     {{for Images ~UniqueId=UniqueId}}
                                     <div class="col-md-3 col-sm-4 col-xs-6" style="width: auto;">
+                                        <form class="recipe-photo-delete" action="/data/{{:~UniqueId}}/photo/{{:#data}}" method="delete" novalidate="novalidate">
+                                            <button type="submit" class="btn btn-danger btn-xs" style="position: absolute; top: 0; right: 5px; border-radius: 12px;">
+                                                <span class="glyphicon glyphicon-remove"></span>
+                                            </button>
+                                        </form>
                                         <a href="#" class="thumbnail recipe-photo">
                                             <img src="/data/{{:~UniqueId}}/photo/{{:#data}}" alt="{{:#data}}" style="height: 160px;" />
                                         </a>
@@ -63,13 +68,13 @@
                         <p>{{html Notes /}}</p>
                         <div class="btn-group btn-group-sm">
                             <button type="button" class="btn btn-primary" title="Revise recipe"
-                                onclick="$('#EditRecipeModal').trigger('editrecipe.load', FindRecipe(parseInt($(this).closest('[data-recipe]').attr('data-recipe'), 10))).modal('show')">
+                                onclick="$('#EditRecipeModal').trigger('editrecipe.load', Recipes.Find(parseInt($(this).closest('[data-recipe]').attr('data-recipe'), 10))).modal('show')">
                                 <span class="glyphicon glyphicon-edit"></span>&nbsp;Revise
                             </button>
-                            <!--<button type="button" class="btn btn-default" title="Upload images"
-                                onclick="$('#UploadImageModal').trigger('uploadimage.load', FindRecipe(parseInt($(this).closest('[data-recipe]').attr('data-recipe'), 10))).modal('show')">
+                            <button type="button" class="btn btn-default" title="Upload images"
+                                onclick="$('#UploadImageModal').trigger('uploadimage.load', Recipes.Find(parseInt($(this).closest('[data-recipe]').attr('data-recipe'), 10))).modal('show')">
                                 <span class="glyphicon glyphicon-picture"></span>&nbsp;Upload Image
-                            </button>-->
+                            </button>
                         </div>
                     </div>
                 </div>

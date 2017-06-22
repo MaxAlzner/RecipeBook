@@ -8,12 +8,17 @@
     "jpeg",
     "png",
     "gif",
+    ".bmp",
+    ".ico",
+    ".svg",
+    ".svgz",
+    ".tif",
+    ".tiff",
     "json",
     "csv",
     "doc",
     "docx",
     "pdf",
     "woff",
-    "woff2",
-    "tiff"
+    "woff2"
 ]

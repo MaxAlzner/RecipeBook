@@ -4,6 +4,7 @@ var path = require('path');
 
 var express = require('express');
 var bodyParser = require('body-parser');
+var formidable = require('formidable');
 
 var Promise = require('promise');
 var fs = require('fs');
@@ -151,7 +152,7 @@ function GetRecipes() {
                     recipes[key] = recipes[key].sort((a, b) => a.Revision - b.Revision);
                     
                     var images = dataFolders.indexOf(key) >= 0 ? fs.readdirSync(__dirname + '/data/' + key).filter(function (file) {
-                        return (new RegExp('^.*\.(.jpg|.jpeg|.png|.gif)$')).test(file);
+                        return (new RegExp('^.*\.(.jpg|.jpeg|.png|.gif|.bmp|.ico|.svg|.svgz|.tif|.tiff)$')).test(file);
                     }) : [];
                     // console.log(images);
                     var imageInfoPath = __dirname + '/data/' + key + '/imageinfo.json';
@@ -316,6 +317,46 @@ app.get('/getrecipes', function (request, response) {
 
 app.get('/data/:uid/photo/:image', function(request, response) {
     response.sendFile(__dirname + '/data/' + request.params.uid + '/' + request.params.image);
+});
+
+app.delete('/data/:uid/photo/:image', function(request, response) {
+    var path = __dirname + '/data/' + request.params.uid + '/' + request.params.image;
+    console.log('REMOVING', path);
+    if (fs.existsSync(path)) {
+        fs.unlink(path, function (err) {
+            if (err ) {
+                HandleError(err);
+            }
+            
+            response.end();
+        });
+    }
+});
+
+app.post('/upload/:uid', function (request, response) {
+    if (!request.params.uid) {
+        response.status(500).send('Recipe unique ID is required.').end();
+    }
+    
+    var folder = __dirname + '/data/' + request.params.uid;
+    if (!fs.existsSync(folder)) {
+        fs.mkdirSync(folder);
+    }
+    
+    var form = new formidable.IncomingForm();
+    form.multiples = true;
+    form.uploadDir = folder;
+    form.on('file', function(field, file) {
+        console.log('UPLOADING', request.params.uid, file.name);
+        fs.rename(file.path, path.join(form.uploadDir, file.name));
+    });
+    form.on('error', function(err) {
+        HandleError(err);
+    });
+    form.on('end', function() {
+        response.end();
+    });
+    form.parse(request);
 });
 
 app.get(new RegExp('^.*\.(' + whitelist.join('|') + ')$'), function (request, response) {
