@@ -114,7 +114,11 @@ jsrender.views.tags({
     }
 });
 
-function HandleError(err) {
+function LogRequest(request) {
+    console.log((new Date()).toISOString() + ' ' + request.ip + ' ' + request.method + ' ' + request.originalUrl);
+}
+
+function LogException(err) {
     console.log('ERROR', err);
 }
 
@@ -154,19 +158,14 @@ function GetRecipes() {
                     var images = dataFolders.indexOf(key) >= 0 ? fs.readdirSync(__dirname + '/data/' + key).filter(function (file) {
                         return (new RegExp('^.*\.(.jpg|.jpeg|.png|.gif|.bmp|.ico|.svg|.svgz|.tif|.tiff)$')).test(file);
                     }) : [];
-                    // console.log(images);
                     var imageInfoPath = __dirname + '/data/' + key + '/imageinfo.json';
-                    // console.log(imageInfoPath, fs.existsSync(imageInfoPath));
                     if (fs.existsSync(imageInfoPath)) {
                         var imageInfo = require(imageInfoPath);
-                        // console.log(imageInfo);
                         var index = images.indexOf(imageInfo.primary);
                         if (imageInfo.primary && index >= 0) {
                             var primary = images[index];
                             images.splice(index, 1);
                             images.unshift(primary);
-                            
-                            // console.log(images);
                         }
                     }
                     
@@ -180,11 +179,11 @@ function GetRecipes() {
                     Units: units    
                 });
             }).catch(function (err) {
-                HandleError(err);
+                LogException(err);
                 reject();
             });
         }).catch(function (err) {
-            HandleError(err);
+            LogException(err);
             reject();
         });
     });
@@ -193,15 +192,16 @@ function GetRecipes() {
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use(function (err, request, response, next) {
-    HandleError(err);
+    LogException(err);
     response.status(500).send('An error has occurred.').end();
 });
 
 app.get('/', function (request, response) {
+    LogRequest(request);
     GetRecipes().then(function (data) {
         fs.readFile(__dirname + '/client/index.html', 'utf8', function (err, file) {
             if (err) {
-                HandleError(err);
+                LogException(err);
                 response.status(404).end();
                 return;
             }
@@ -224,6 +224,7 @@ app.get('/error', function(request, response) {
 });
 
 app.post('/saverecipe', function (request, response) {
+    LogRequest(request);
     var recipe = request.body.recipe;
     if (!recipe) {
         response.status(500).send('No data sent.').end();
@@ -272,21 +273,17 @@ app.post('/saverecipe', function (request, response) {
             response.status(500).send('Direction description is a required field.').end();
         }
     });
-
-    // console.log(JSON.stringify(recipe));
-
+    
     db.Recipe.findOne({
         attributes: ['Revision'],
         where: { UniqueId: recipe.UniqueId },
         order: [['Revision', 'DESC']]
     }).then(function (rev) {
         rev = (rev ? rev.dataValues.Revision : 0) + 1;
-        // console.log('Saving Recipe', 'Revision: ', rev);
         recipe.Revision = rev;
         
         connection.transaction(function (t) {
             return db.Recipe.create(recipe, { transaction: t }).then(function (result) {
-                // console.log('New Recipe ID: ', result.null);
                 recipe.Ingredients.forEach((ingredient) => ingredient.RecipeId = result.null);
                 recipe.Directions.forEach((direction) => direction.RecipeId = result.null);
                 
@@ -297,35 +294,37 @@ app.post('/saverecipe', function (request, response) {
         }).then(function (result) {
             response.json(recipe);
         }).catch(function (err) {
-            HandleError(err);
+            LogException(err);
             response.redirect('/error');
         });
     }).catch(function (err) {
-        HandleError(err);
+        LogException(err);
         response.redirect('/error');
     });
 });
 
 app.get('/getrecipes', function (request, response) {
+    LogRequest(request);
     GetRecipes().then(function (data) {
         response.json(data.Recipes);
     }).catch(function (err) {
-        HandleError(err);
+        LogException(err);
         response.redirect('/error');
     });
 });
 
 app.get('/data/:uid/photo/:image', function(request, response) {
+    LogRequest(request);
     response.sendFile(__dirname + '/data/' + request.params.uid + '/' + request.params.image);
 });
 
 app.delete('/data/:uid/photo/:image', function(request, response) {
+    LogRequest(request);
     var path = __dirname + '/data/' + request.params.uid + '/' + request.params.image;
-    console.log('REMOVING', path);
     if (fs.existsSync(path)) {
         fs.unlink(path, function (err) {
             if (err ) {
-                HandleError(err);
+                LogException(err);
             }
             
             response.end();
@@ -334,6 +333,7 @@ app.delete('/data/:uid/photo/:image', function(request, response) {
 });
 
 app.put('/data/:uid/photo', function (request, response) {
+    LogRequest(request);
     if (!request.params.uid) {
         response.status(500).send('Recipe unique ID is required.').end();
     }
@@ -347,11 +347,11 @@ app.put('/data/:uid/photo', function (request, response) {
     form.multiples = true;
     form.uploadDir = folder;
     form.on('file', function(field, file) {
-        console.log('UPLOADING', request.params.uid, file.name);
+        LogRequest(request);
         fs.rename(file.path, path.join(form.uploadDir, file.name));
     });
     form.on('error', function(err) {
-        HandleError(err);
+        LogException(err);
     });
     form.on('end', function() {
         response.end();
@@ -360,7 +360,7 @@ app.put('/data/:uid/photo', function (request, response) {
 });
 
 app.get(new RegExp('^.*\.(' + whitelist.join('|') + ')$'), function (request, response) {
-    console.log('SEND', __dirname + '/client' + request.originalUrl);
+    LogRequest(request);
     response.sendFile(__dirname + '/client' + request.originalUrl);
 });
 
