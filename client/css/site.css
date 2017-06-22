@@ -170,3 +170,7 @@ textarea.form-control {
     width: 1200px;
   }
 }
+
+.img-responsive {
+    display: inline-block;
+}

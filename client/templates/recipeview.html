@@ -31,12 +31,10 @@
                                 <div id="recipes-images-{{:RecipeId}}" class="row">
                                     {{for Images ~UniqueId=UniqueId}}
                                     <div class="col-md-3 col-sm-4 col-xs-6" style="width: auto;">
-                                        <form class="recipe-photo-delete" action="/data/{{:~UniqueId}}/photo/{{:#data}}" method="delete" novalidate="novalidate">
-                                            <button type="submit" class="btn btn-danger btn-xs" style="position: absolute; top: 0; right: 5px; border-radius: 12px;">
-                                                <span class="glyphicon glyphicon-remove"></span>
-                                            </button>
-                                        </form>
-                                        <a href="#" class="thumbnail recipe-photo">
+                                        <button type="submit" class="btn btn-danger btn-xs recipe-photo-delete" formaction="/data/{{:~UniqueId}}/photo/{{:#data}}" style="position: absolute; top: 3px; right: 5px; border-radius: 12px;">
+                                            <span class="glyphicon glyphicon-remove"></span>
+                                        </button>
+                                        <a href="#" class="thumbnail recipe-photo" data-id="{{:~UniqueId}}" data-image="{{:#data}}">
                                             <img src="/data/{{:~UniqueId}}/photo/{{:#data}}" alt="{{:#data}}" style="height: 160px;" />
                                         </a>
                                     </div>

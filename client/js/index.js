@@ -89,12 +89,19 @@ var Recipes = (function () {
     $('#recipelist')
         .on('click', '.recipe-photo', function (e) {
             e.preventDefault();
+            $('#ViewImageModal')
+                .trigger('viewimage.load', {
+                    id: this.dataset.id,
+                    image: this.dataset.image
+                })
+                .modal('show');
             return false;
         })
-        .on('submit', '.recipe-photo-delete', function (e) {
+        .on('click', '.recipe-photo-delete', function (e) {
             e.preventDefault();
+            this.disabled = true;
             $.ajax({
-                url: this.action,
+                url: this.formAction,
                 type: 'DELETE',
                 success: function () {
                     Recipes.Refresh();
@@ -253,6 +260,13 @@ var Recipes = (function () {
             });
         });
     
+    $('#ViewImageModal')
+        .on('viewimage.load', function (e, data) {
+            $('#ViewImageModalLabel').text(data.image);
+            $('#viewimage')
+                .prop('src', '/data/' + data.id + '/photo/' + data.image)
+                .prop('alt', data.image);
+        });
     $('#UploadImageModal')
         .on('uploadimage.load', function (e, recipe) {
             $('#uploadimage-uniqueid').val(recipe.UniqueId || '');
