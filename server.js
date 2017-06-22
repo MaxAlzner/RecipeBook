@@ -168,7 +168,6 @@ function GetRecipes() {
                             var primary = images[index];
                             images.splice(index, 1);
                             images.unshift(primary);
-                            images.Primary = true;
                         }
                     }
                     
