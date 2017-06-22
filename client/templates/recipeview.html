@@ -12,18 +12,33 @@
                 <div role="tabpanel" class="tab-pane {{if #index === (~length - 1)}}active{{/if}}" id="recipe-collapse-{{:RecipeId}}">
                     <div class="recipe" data-recipe="{{:RecipeId}}" data-name="{{:Name}}">
                         <h3>{{:Name}}</h3>
-                        <dl class="dl-horizontal">
-                            <dt>Prep</dt>
-                            <dd>{{:PrepTime}}</dd>
-                            <dt>Cook</dt>
-                            <dd>{{:CookTime}}</dd>
-                            <dt>Total</dt>
-                            <dd>{{:TotalTime}}</dd>
-                            <dt>Servings</dt>
-                            <dd>{{:Servings}}</dd>
-                            <dt>Calories</dt>
-                            <dd>{{:Calories}}</dd>
-                        </dl>
+                        <div class="media">
+                            <div class="media-left media-middle">
+                                <dl class="dl-horizontal" style="margin-right: 60px;">
+                                    <dt>Prep</dt>
+                                    <dd>{{:PrepTime}}</dd>
+                                    <dt>Cook</dt>
+                                    <dd>{{:CookTime}}</dd>
+                                    <dt>Total</dt>
+                                    <dd>{{:TotalTime}}</dd>
+                                    <dt>Servings</dt>
+                                    <dd>{{:Servings}}</dd>
+                                    <dt>Calories</dt>
+                                    <dd>{{:Calories}}</dd>
+                                </dl>
+                            </div>
+                            <div class="media-body">
+                                <div id="recipes-images-{{:RecipeId}}" class="row">
+                                    {{for Images ~UniqueId=UniqueId}}
+                                    <div class="col-md-3 col-sm-4 col-xs-6" style="width: auto;">
+                                        <a href="#" class="thumbnail recipe-photo">
+                                            <img src="/data/{{:~UniqueId}}/photo/{{:#data}}" alt="{{:#data}}" style="height: 160px;" />
+                                        </a>
+                                    </div>
+                                    {{/for}}
+                                </div>
+                            </div>
+                        </div>
                         <div class="row">
                             {{props IngredientGroups}}
                             <div class="col-sm-6">
@@ -47,9 +62,14 @@
                         </ol>
                         <p>{{html Notes /}}</p>
                         <div class="btn-group btn-group-sm">
-                            <button type="button" class="btn btn-default" title="Revise recipe" onclick="$('#EditRecipeModal').trigger('editrecipe.load', FindRecipe(parseInt($(this).closest('[data-recipe]').attr('data-recipe'), 10))).modal('show')">
+                            <button type="button" class="btn btn-primary" title="Revise recipe"
+                                onclick="$('#EditRecipeModal').trigger('editrecipe.load', FindRecipe(parseInt($(this).closest('[data-recipe]').attr('data-recipe'), 10))).modal('show')">
                                 <span class="glyphicon glyphicon-edit"></span>&nbsp;Revise
                             </button>
+                            <!--<button type="button" class="btn btn-default" title="Upload images"
+                                onclick="$('#UploadImageModal').trigger('uploadimage.load', FindRecipe(parseInt($(this).closest('[data-recipe]').attr('data-recipe'), 10))).modal('show')">
+                                <span class="glyphicon glyphicon-picture"></span>&nbsp;Upload Image
+                            </button>-->
                         </div>
                     </div>
                 </div>

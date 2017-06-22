@@ -127,6 +127,7 @@ function GetRecipes() {
                 include: [db.Ingredient, db.Direction]
             }).then(function (result) {
                 var recipes = result.map((node) => node.dataValues);
+                var dataFolders = fs.readdirSync(__dirname + '/data');
                 recipes.forEach(function (row) {
                     row.CreateDate = row.CreateDate.toLocaleString();
                     row.Ingredients = row.Ingredients.map(function (ingredient) {
@@ -145,11 +146,32 @@ function GetRecipes() {
                         ingredient.Section = !isNaN(ingredient.Section) ? null : ingredient.Section;
                     });
                 });
-                recipes = groupArray(recipes.sort((a, b) => {
-                    return a.Name.localeCompare(b.Name);
-                }), 'UniqueId');
+                recipes = groupArray(recipes.sort((a, b) => { return a.Name.localeCompare(b.Name); }), 'UniqueId');
                 for (var key in recipes) {
                     recipes[key] = recipes[key].sort((a, b) => a.Revision - b.Revision);
+                    
+                    var images = dataFolders.indexOf(key) >= 0 ? fs.readdirSync(__dirname + '/data/' + key).filter(function (file) {
+                        return (new RegExp('^.*\.(.jpg|.jpeg|.png|.gif)$')).test(file);
+                    }) : [];
+                    // console.log(images);
+                    var imageInfoPath = __dirname + '/data/' + key + '/imageinfo.json';
+                    // console.log(imageInfoPath, fs.existsSync(imageInfoPath));
+                    if (fs.existsSync(imageInfoPath)) {
+                        var imageInfo = require(imageInfoPath);
+                        // console.log(imageInfo);
+                        var index = images.indexOf(imageInfo.primary);
+                        if (imageInfo.primary && index >= 0) {
+                            var primary = images[index];
+                            images.splice(index, 1);
+                            images.unshift(primary);
+                            
+                            // console.log(images);
+                        }
+                    }
+                    
+                    recipes[key].forEach(function (row) {
+                        row.Images = images;
+                    });
                 }
                 
                 resolve({
@@ -290,6 +312,10 @@ app.get('/getrecipes', function (request, response) {
         HandleError(err);
         response.redirect('/error');
     });
+});
+
+app.get('/data/:uid/photo/:image', function(request, response) {
+    response.sendFile(__dirname + '/data/' + request.params.uid + '/' + request.params.image);
 });
 
 app.get(new RegExp('^.*\.(' + whitelist.join('|') + ')$'), function (request, response) {

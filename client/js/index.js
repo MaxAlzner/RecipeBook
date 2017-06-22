@@ -69,6 +69,12 @@ function RefreshRecipes(recipes) {
             return false;
         });
     
+    $('#recipelist')
+        .on('click', '.recipe-photo', function (e) {
+            e.preventDefault();
+            return false;
+        });
+        
     $('#EditRecipeModal')
         .on('editrecipe.load', function (e, recipe) {
             if (recipe.RecipeId) {
@@ -219,5 +225,11 @@ function RefreshRecipes(recipes) {
             $('#directions .direction-description').each(function (index) {
                 this.name = 'recipe[Directions][' + index + '][Description]';
             });
+        });
+    
+    $('#UploadImageModal')
+        .on('uploadimage.load', function (e, recipe) {
+        })
+        .on('show.bs.modal', function () {
         });
 }());
