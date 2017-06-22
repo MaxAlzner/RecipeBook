@@ -2,11 +2,13 @@
     {{props #data}}
     <div class="panel panel-default" data-group="{{:key}}">
         <div class="panel-body">
+            {{if prop.length > 1}}
             <ul class="nav nav-tabs" role="tablist">
                 {{for prop ~length=prop.length}}
                 <li role="presentation" {{if #index === (~length - 1)}}class="active"{{/if}}><a href="#recipe-collapse-{{:RecipeId}}" aria-controls="recipe-collapse-{{:RecipeId}}" role="tab" data-toggle="tab">Rev {{:Revision}}</a></li>
                 {{/for}}
             </ul>
+            {{/if}}
             <div class="tab-content">
                 {{for prop ~length=prop.length}}
                 <div role="tabpanel" class="tab-pane {{if #index === (~length - 1)}}active{{/if}}" id="recipe-collapse-{{:RecipeId}}">
