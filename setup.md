@@ -1,19 +1,21 @@
 
 # setup server instructions
+[source](https://www.digitalocean.com/community/tutorials/how-to-set-up-a-node-js-application-for-production-on-ubuntu-16-04)
 
 1. Install mysql
 2. Run mysql script(s)
     - db/schema.sql
     - db/dump.sql
-3. npm upgrade
-4. sudo npm install -g pm2
-5. pm2 start server.js
-6. pm2 startup systemd
-7. sudo env PATH=$PATH:/usr/bin /usr/lib/node_modules/pm2/bin/pm2 startup systemd -u <username> --hp /home/<username>
-8. systemctl status pm2-<username>
-9. sudo nano /etc/nginx/sites-available/default
+3. Setup mysql user
+4. Copy db-config-base.json and rename to db-config.json, then fill in relevant info.
+5. npm upgrade
+6. sudo npm install -g pm2
+7. pm2 start server.js
+8. pm2 startup systemd
+9. sudo env PATH=$PATH:/usr/bin /usr/lib/node_modules/pm2/bin/pm2 startup systemd -u <username> --hp /home/<username>
+10. systemctl status pm2-<username>
+11. sudo nano /etc/nginx/sites-available/default
 ```
-
     location / {
         proxy_pass http://localhost:8080;
         proxy_http_version 1.1;
@@ -23,8 +25,8 @@
         proxy_cache_bypass $http_upgrade;
     }
 ```
-10. sudo nginx -t
-11. sudo systemctl restart nginx
+12. sudo nginx -t
+13. sudo systemctl restart nginx
 
 # server upgrade
 
