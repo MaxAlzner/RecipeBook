@@ -171,6 +171,7 @@ var Recipes = (function () {
             $('#editrecipe').validate().resetForm();
             $('#editrecipe .has-error').removeClass('has-error');
             $('#editrecipe textarea').css('height', '');
+            $('#ingredients .ingredient-section').first().trigger('focusout');
         });
     $('#editrecipe')
         .on('submit', function (e) {
