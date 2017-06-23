@@ -52,7 +52,7 @@
         <div id="recipelist">
         </div>
     </div>
-    <div id="EditRecipeModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="EditRecipeModalLabel">
+    <div id="EditRecipeModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="EditRecipeModalLabel" data-backdrop="static">
         <div class="modal-dialog modal-xl" role="document">
             <form id="editrecipe" class="modal-content" action="recipe" method="post" novalidate="novalidate">
                 <div class="modal-header">
@@ -110,7 +110,14 @@
                             </div>
                             <div class="form-group">
                                 <fieldset>
-                                    <legend class="h4">Directions<button type="button" id="editrecipe-adddirection" class="btn btn-success btn-xs pull-right"><span class="glyphicon glyphicon-plus"></span></button></legend>
+                                    <legend class="h4" style="padding-bottom: 10px;">
+                                        <span style="display: inline-block; margin-top: 10px;">Directions</span>
+                                        <span class="form-inline pull-right">
+                                            <span class="form-group form-group-sm">
+                                                <input type="number" id="editrecipe-directions" class="form-control ignore" style="width: 80px;" />
+                                            </span>
+                                        </span>
+                                    </legend>
                                     <div id="directions">
                                         <div id="directions-empty" class="text-muted">There are no directions.</div>
                                     </div>
@@ -120,7 +127,14 @@
                         <div class="col-lg-5 col-md-6">
                             <div class="form-group">
                                 <fieldset>
-                                    <legend class="h4">Ingredients<button type="button" id="editrecipe-addingredient" class="btn btn-success btn-xs pull-right"><span class="glyphicon glyphicon-plus"></span></button></legend>
+                                    <legend class="h4" style="padding-bottom: 10px;">
+                                        <span style="display: inline-block; margin-top: 10px;">Ingredients</span>
+                                        <span class="form-inline pull-right">
+                                            <span class="form-group form-group-sm">
+                                                <input type="number" id="editrecipe-ingredients" class="form-control ignore" style="width: 80px;" />
+                                            </span>
+                                        </span>
+                                    </legend>
                                     <div id="ingredients">
                                         <div id="ingredients-empty" class="text-muted">There are no ingredients.</div>
                                     </div>

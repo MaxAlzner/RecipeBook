@@ -146,10 +146,12 @@ var Recipes = (function () {
                         i: index
                     }));
                 });
+                $('#editrecipe-ingredients').val(recipe.Ingredients.length);
                 $('#ingredients').trigger('editrecipe.reorder');
             }
             else {
                 $('#ingredients-empty').show();
+                $('#editrecipe-ingredients').val('');
             }
             
             $('#directions-empty').hide().siblings().remove();
@@ -160,10 +162,12 @@ var Recipes = (function () {
                         i: index
                     }));
                 });
+                $('#editrecipe-directions').val(recipe.Directions.length);
                 $('#directions').trigger('editrecipe.reorder');
             }
             else {
                 $('#directions-empty').show();
+                $('#editrecipe-directions').val('');
             }
         })
         .on('show.bs.modal', function () {
@@ -195,31 +199,51 @@ var Recipes = (function () {
             $(this).valid();
         })
         .validate();
-    $('#editrecipe-addingredient')
-        .on('click', function () {
-            $('#ingredients-empty').hide();
-            $('#ingredients')
-                .append($('#IngredientTemplate').render({
-                    i: $('.ingredient').length,
-                    Ingredient: {
-                        RecipeId: $('#editrecipe-recipeid').val()
-                    },
-                    Units: units
-                }))
-                .trigger('editrecipe.reorder');
+    $('#editrecipe-ingredients')
+        .on('change', function () {
+            var len = $('#ingredients .ingredient').length,
+                mod = (parseInt(this.value, 10) || 0) - len;
+            if (mod > 0) {
+                $('#ingredients-empty').hide();
+                for (var i = 0; i < mod; i++) {
+                    $('#ingredients')
+                        .append($('#IngredientTemplate').render({
+                            i: len + i,
+                            Ingredient: {
+                                RecipeId: $('#editrecipe-recipeid').val()
+                            },
+                            Units: units
+                        }));
+                }
+            }
+            else if (mod < 0) {
+                $($('#ingredients .ingredient').get().reverse().slice(0, Math.abs(mod))).remove();
+            }
+            
+            $('#ingredients').trigger('editrecipe.reorder');
         });
-    $('#editrecipe-adddirection')
-        .on('click', function () {
-            $('#directions-empty').hide();
-            $('#directions')
-                .append($('#DirectionTemplate').render({
-                    i: $('.direction').length,
-                    Direction: {
-                        RecipeId: $('#editrecipe-recipeid').val(),
-                        Step: $('.direction').length + 1
-                    }
-                }))
-                .trigger('editrecipe.reorder');
+    $('#editrecipe-directions')
+        .on('change', function () {
+            var len = $('#directions .direction').length,
+                mod = (parseInt(this.value, 10) || 0) - len;
+            if (mod > 0) {
+                $('#directions-empty').hide();
+                for (var i = 0; i < mod; i++) {
+                    $('#directions')
+                        .append($('#DirectionTemplate').render({
+                            i: len + i,
+                            Direction: {
+                                RecipeId: $('#editrecipe-recipeid').val(),
+                                Step: len + i + 1
+                            }
+                        }));
+                }
+            }
+            else if (mod < 0) {
+                $($('#directions .direction').get().reverse().slice(0, Math.abs(mod))).remove();
+            }
+            
+            $('#directions').trigger('editrecipe.reorder');
         });
     $('#ingredients')
         .on('editrecipe.reorder', function () {
@@ -293,7 +317,7 @@ var Recipes = (function () {
             $('#uploadimage-file').val(null);
         });
     $('#uploadimage-file')
-        .change(function (e) {
+        .on('change', function (e) {
             var data = new FormData();
             $.each(this.files, function (index, file) {
                 data.append('file[' + index + ']', file);
