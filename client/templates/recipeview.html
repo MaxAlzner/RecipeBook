@@ -37,7 +37,7 @@
                                             <span class="glyphicon glyphicon-remove"></span>
                                         </button>
                                         <span style="position: absolute; bottom: 25px; left: 25px;">
-                                            <input type="radio" class="recipe-photo-primary" name="recipe-image-{{:~RecipeId}}-primary" formaction="/data/{{:~UniqueId}}/photo" {{if ~info.primary === #data}}checked{{/if}} value="{{:#data}}" />
+                                            <input type="radio" class="recipe-photo-primary" name="recipe-image-{{:~RecipeId}}-primary" formaction="/data/{{:~UniqueId}}/info" {{if ~info.primary === #data}}checked{{/if}} value="{{:#data}}" />
                                         </span>
                                         <a href="#" class="thumbnail recipe-photo" data-id="{{:~UniqueId}}" data-image="{{:#data}}">
                                             <img src="/data/{{:~UniqueId}}/photo/{{:#data}}" alt="{{:#data}}" style="height: 160px;" />

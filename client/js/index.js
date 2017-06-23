@@ -40,7 +40,7 @@ var Recipes = (function () {
         },
         Refresh: function () {
             var defer = $.Deferred();
-            $.get('getrecipes', function (response) {
+            $.get('recipes', function (response) {
                 $('#recipes').val(JSON.stringify(response));
                 Recipes.Draw(response);
                 defer.resolve();
