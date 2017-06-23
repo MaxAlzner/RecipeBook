@@ -6,13 +6,16 @@ VALUES
 	('EA', 'Each', 'Each'),
     ('ML', 'Millilitre', 'Millilitre'),
     ('L', 'Litre', 'Litre'),
+    ('G', 'Gram', 'Gram'),
+    ('KG', 'Kilogram', 'Kilogram'),
 	('CUP', 'US Cup', 'Cup'),
 	('TSP', 'US Teaspoon', 'Teaspoon'),
 	('TBSP', 'US Tablespoon', 'Tablespoon'),
     ('FLOZ', 'US Fluid Ounce', 'FL Ounce'),
     ('PT', 'US Fluid Pint', 'Pint'),
     ('QT', 'US Fluid Quart', 'Quart'),
-    ('GAL', 'US Fluid Gallon', 'Gallon');
+    ('GAL', 'US Fluid Gallon', 'Gallon'),
+    ('LB', 'US Pound', 'Pound');
 
 
 INSERT INTO Recipe(RecipeId, UniqueId, `Name`, PrepTime, CookTime, TotalTime, Servings, Calories, Notes, Revision, CreateDate)
