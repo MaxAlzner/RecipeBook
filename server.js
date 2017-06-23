@@ -24,8 +24,8 @@ const schema = require('./schema.js');
 const connection = schema.connection;
 const db = schema.model;
 
-if (!fs.existsSync(__dirname + '/data')) {
-    fs.mkdirSync(__dirname + '/data');
+if (!fs.existsSync(path.join(__dirname, 'data'))) {
+    fs.mkdirSync(path.join(__dirname, 'data'));
 }
 
 jsrender.views.tags({
@@ -33,7 +33,7 @@ jsrender.views.tags({
         return JSON.stringify(val).replace(/"/g, '&#34;').replace(/'/g, '&#39;');
     },
     template: function (file, name) {
-        var data = fs.readFileSync(__dirname + '/client/templates/' + file, 'utf8');
+        var data = fs.readFileSync(path.join(__dirname, 'client/templates', file), 'utf8');
         return '<script id="' + name + '" type="text/x-jsrender">' + data + '</script>';
     }
 });
@@ -48,13 +48,13 @@ app.use(function (err, request, response, next) {
 app.get('/', function (request, response) {
     logger.request(request);
     schema.getRecipes().then(function (data) {
-        fs.readFile(__dirname + '/client/index.html', 'utf8', function (err, file) {
+        fs.readFile(path.join(__dirname, 'client/index.html'), 'utf8', function (err, file) {
             if (err) {
                 logger.exception(err);
                 response.status(404).end();
                 return;
             }
-
+            
             var tmpl = jsrender.templates(file);
             var html = tmpl.render(data);
             response
@@ -69,7 +69,7 @@ app.get('/', function (request, response) {
 });
 
 app.get('/error', function(request, response) {
-    response.status(500).sendFile(__dirname + '/error/500.html');
+    response.status(500).sendFile(path.join(__dirname, 'error/500.html'));
 });
 
 app.get('/recipes', function (request, response) {
@@ -164,14 +164,30 @@ app.post('/recipe', function (request, response) {
 
 app.get('/data/:uid/photo/:image', function(request, response) {
     logger.request(request);
-    response.sendFile(__dirname + '/data/' + request.params.uid + '/' + request.params.image);
+    if (!request.params.uid) {
+        response.status(500).send('Recipe unique ID is required.').end();
+    }
+    
+    if (!request.params.image) {
+        response.status(500).send('Image name is required.').end();
+    }
+    
+    response.sendFile(path.join(__dirname, 'data', request.params.uid, request.params.image));
 });
 
 app.delete('/data/:uid/photo/:image', function(request, response) {
     logger.request(request);
-    var path = __dirname + '/data/' + request.params.uid + '/' + request.params.image;
-    if (fs.existsSync(path)) {
-        fs.unlink(path, function (err) {
+    if (!request.params.uid) {
+        response.status(500).send('Recipe unique ID is required.').end();
+    }
+    
+    if (!request.params.image) {
+        response.status(500).send('Image name is required.').end();
+    }
+    
+    var file = path.join(__dirname, 'data', request.params.uid, request.params.image);
+    if (fs.existsSync(file)) {
+        fs.unlink(file, function (err) {
             if (err ) {
                 logger.exception(err);
             }
@@ -187,7 +203,7 @@ app.put('/data/:uid/photo', function (request, response) {
         response.status(500).send('Recipe unique ID is required.').end();
     }
     
-    var folder = __dirname + '/data/' + request.params.uid;
+    var folder = path.join(__dirname, 'data', request.params.uid);
     if (!fs.existsSync(folder)) {
         fs.mkdirSync(folder);
     }
@@ -214,22 +230,22 @@ app.post('/data/:uid/info', function (request, response) {
         response.status(500).send('Recipe unique ID is required.').end();
     }
     
-    var folder = __dirname + '/data/' + request.params.uid;
+    var folder = path.join(__dirname, 'data', request.params.uid);
     if (!fs.existsSync(folder)) {
         fs.mkdirSync(folder);
     }
     
-    fs.writeFileSync(folder + '/imageinfo.json', JSON.stringify(request.body));
+    fs.writeFileSync(path.join(folder, 'imageinfo.json'), JSON.stringify(request.body));
     
     response.end();
 });
 
 app.get(new RegExp('^.*\.(' + whitelist.join('|') + ')$'), function (request, response) {
     logger.request(request);
-    response.sendFile(__dirname + '/client' + request.originalUrl);
+    response.sendFile(path.join(__dirname, 'client', request.originalUrl));
 });
 
-var server = app.listen(process.env.PORT || 3000, process.env.IP || '127.0.0.1', function() {
+const server = app.listen(process.env.PORT || 3000, process.env.IP || '127.0.0.1', function() {
   var addr = server.address();
   console.log('Server running at ' + addr.address + ':' + addr.port + '\n');
 });

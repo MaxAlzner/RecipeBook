@@ -5,14 +5,14 @@ const groupArray = require('group-array');
 
 const logger = require('./logger');
 
-var dbconfig = require('./db-config.json');
+const dbconfig = require('./db-config.json');
 if (!dbconfig) {
     console.error('Failed to find database connection settings.');
 }
 
-var Sequelize = require('sequelize');
+const Sequelize = require('sequelize');
 
-var connection = new Sequelize(dbconfig.database, dbconfig.user, dbconfig.password, {
+const connection = new Sequelize(dbconfig.database, dbconfig.user, dbconfig.password, {
     host: dbconfig.host,
     dialect: 'mysql',
     pool: {
@@ -164,5 +164,5 @@ module.exports = {
             });
         });
     }
-
+    
 };
