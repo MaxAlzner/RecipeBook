@@ -223,6 +223,10 @@ var Recipes = (function () {
         });
     $('#ingredients')
         .on('editrecipe.reorder', function () {
+            if ($('.ingredient').length < 1) {
+                $('#ingredients-empty').show();
+            }
+
             $('#ingredients .ingredient-recipeid').each(function (index) {
                 this.name = 'recipe[Ingredients][' + index + '][RecipeId]';
             });
@@ -256,6 +260,10 @@ var Recipes = (function () {
         });
     $('#directions')
         .on('editrecipe.reorder', function () {
+            if ($('.direction').length < 1) {
+                $('#directions-empty').show();
+            }
+            
             $('#directions .direction-recipeid').each(function (index) {
                 this.name = 'recipe[Directions][' + index + '][RecipeId]';
             });
