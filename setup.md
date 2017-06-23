@@ -12,8 +12,8 @@
 6. sudo npm install -g pm2
 7. pm2 start server.js
 8. pm2 startup systemd
-9. sudo env PATH=$PATH:/usr/bin /usr/lib/node_modules/pm2/bin/pm2 startup systemd -u <username> --hp /home/<username>
-10. systemctl status pm2-<username>
+9. sudo env PATH=$PATH:/usr/bin /usr/lib/node_modules/pm2/bin/pm2 startup systemd -u username --hp /home/username
+10. systemctl status pm2-username
 11. sudo nano /etc/nginx/sites-available/default
 ```
     location / {
