@@ -27,7 +27,9 @@ var Recipes = (function () {
                 });
             
             $('#recipes').val(JSON.stringify(recipes));
-            $('#recipelist').empty().append($('#RecipeViewTemplate').render(recipes));
+            $('#recipelist').empty().append($('#RecipeViewTemplate').render({
+                Recipes: recipes
+            }));
             
             $('#pager li').addClass('disabled');
             $('#pager [data-group]').removeAttr('data-group');

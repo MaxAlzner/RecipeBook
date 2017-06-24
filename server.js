@@ -68,6 +68,34 @@ app.get('/', function (request, response) {
     });
 });
 
+app.get('/view/:id', function (request, response) {
+    logger.request(request);
+    var id = parseInt(request.params.id, 10);
+    if (isNaN(id)) {
+        response.status(500).send('Recipe ID is not valid.').end();
+    }
+
+    schema.getRecipe(id).then(function (data) {
+        fs.readFile(path.join(__dirname, 'client/view.html'), 'utf8', function (err, file) {
+            if (err) {
+                logger.exception(err);
+                response.status(404).end();
+                return;
+            }
+            
+            var tmpl = jsrender.templates(file);
+            var html = tmpl.render(data);
+            response
+                .status(200)
+                .set('Content-Type', 'text/html')
+                .send(html)
+                .end();
+        });
+    }).catch(function () {
+        response.redirect('/error');
+    });
+});
+
 app.get('/error', function(request, response) {
     response.status(500).sendFile(path.join(__dirname, 'error/500.html'));
 });
@@ -81,6 +109,39 @@ app.get('/recipes', function (request, response) {
         response.redirect('/error');
     });
 });
+
+app.get('/recipe/:id', function (request, response) {
+    logger.request(request);
+    var id = parseInt(request.params.id, 10);
+    if (isNaN(id)) {
+        response.status(500).send('Recipe ID is not valid.').end();
+    }
+
+    schema.getRecipe(id).then(function (data) {
+        response.json(data);
+    }).catch(function (err) {
+        logger.exception(err);
+        response.redirect('/error');
+    });
+});
+
+app.delete('/recipe/:id', function (request, response) {
+    logger.request(request);
+    var id = parseInt(request.params.id, 10);
+    if (isNaN(id)) {
+        response.status(500).send('Recipe ID is not valid.').end();
+    }
+    db.Recipe.destroy({
+        where: {
+            RecipeId: id
+        }
+    }).then(function () {
+        response.end();
+    }).catch(function (err) {
+        logger.exception(err);
+        response.redirect('/error');
+    });
+})
 
 app.post('/recipe', function (request, response) {
     logger.request(request);

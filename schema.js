@@ -1,5 +1,6 @@
 
 const Promise = require('promise');
+const path = require('path');
 const fs = require('fs');
 const groupArray = require('group-array');
 
@@ -94,6 +95,70 @@ db.Unit.hasMany(db.Ingredient, { foreignKey: 'UnitCode' });
 module.exports = {
     connection: connection,
     model: db,
+
+    getRecipe: function (id) {
+        return new Promise(function (resolve, reject) {
+            db.Unit.findAll({
+                order: ['Name']
+            }).then(function (units) {
+                units = units.map((node) => node.dataValues);
+                db.Recipe.findOne({
+                    where: {
+                        RecipeId: id   
+                    },
+                    include: [db.Ingredient, db.Direction]
+                }).then(function (result) {
+                    var recipe = result.dataValues;
+                    recipe.CreateDate = recipe.CreateDate.toLocaleString();
+                    recipe.Ingredients = recipe.Ingredients.map(function (ingredient) {
+                        ingredient = ingredient.dataValues;
+                        ingredient.Section = ingredient.Section === null ? 0 : ingredient.Section;
+                        ingredient.Unit = units.find((unit) => unit.Code === ingredient.UnitCode);
+                        return ingredient;
+                    });
+                    
+                    recipe.IngredientGroups = groupArray(recipe.Ingredients, 'Section');
+                    recipe.Directions = recipe.Directions
+                        .map((direction) => direction.dataValues)
+                        .sort(function (a, b) { return a.Step - b.Step; });
+                    
+                    recipe.Ingredients.forEach(function (ingredient) {
+                        ingredient.Section = !isNaN(ingredient.Section) ? null : ingredient.Section;
+                    });
+                    
+                    recipe.Images = [];
+                    recipe.DataInfo = {};
+                    if (fs.existsSync(path.join(__dirname, 'data', recipe.UniqueId))) {
+                        var images = fs.readdirSync(path.join(__dirname, 'data', recipe.UniqueId)).filter(function (file) {
+                            return /^.*.(.jpg|.jpeg|.png|.gif|.bmp|.ico|.svg|.svgz|.tif|.tiff)$/.test(file);
+                        });
+                        var info = {};
+                        var infoPath = path.join(__dirname, 'data', recipe.UniqueId, 'imageinfo.json');
+                        if (fs.existsSync(infoPath)) {
+                            info = JSON.parse(fs.readFileSync(infoPath));
+                            var index = images.indexOf(info.primary);
+                            if (info.primary && index >= 0) {
+                                var primary = images[index];
+                                images.splice(index, 1);
+                                images.unshift(primary);
+                            }
+                        }
+                        
+                        recipe.Images = images;
+                        recipe.DataInfo = info;
+                    }
+
+                    resolve(recipe);
+                }).catch(function (err) {
+                    logger.exception(err);
+                    reject();
+                });
+            }).catch(function (err) {
+                logger.exception(err);
+                reject();
+            });
+        });
+    },
     
     getRecipes: function () {
         return new Promise(function (resolve, reject) {
@@ -105,7 +170,7 @@ module.exports = {
                     include: [db.Ingredient, db.Direction]
                 }).then(function (result) {
                     var recipes = result.map((node) => node.dataValues);
-                    var dataFolders = fs.readdirSync(__dirname + '/data');
+                    var dataFolders = fs.readdirSync(path.join(__dirname, 'data'));
                     recipes.forEach(function (row) {
                         row.CreateDate = row.CreateDate.toLocaleString();
                         row.Ingredients = row.Ingredients.map(function (ingredient) {
@@ -129,11 +194,11 @@ module.exports = {
                     for (var key in recipes) {
                         recipes[key] = recipes[key].sort((a, b) => a.Revision - b.Revision);
                         
-                        var images = dataFolders.indexOf(key) >= 0 ? fs.readdirSync(__dirname + '/data/' + key).filter(function (file) {
+                        var images = dataFolders.indexOf(key) >= 0 ? fs.readdirSync(path.join(__dirname, 'data', key)).filter(function (file) {
                             return /^.*.(.jpg|.jpeg|.png|.gif|.bmp|.ico|.svg|.svgz|.tif|.tiff)$/.test(file);
                         }) : [];
                         var info = {};
-                        var infoPath = __dirname + '/data/' + key + '/imageinfo.json';
+                        var infoPath = path.join(__dirname, 'data', key, 'imageinfo.json');
                         if (fs.existsSync(infoPath)) {
                             info = JSON.parse(fs.readFileSync(infoPath));
                             var index = images.indexOf(info.primary);

@@ -1,5 +1,5 @@
 <div class="panel-group" role="tablist" aria-multiselectable="true">
-    {{props #data}}
+    {{props #data.Recipes ~viewonly=#data._viewonly}}
     <div class="panel panel-default" data-group="{{:key}}">
         <div class="panel-body">
             {{if prop.length > 1}}
@@ -10,10 +10,10 @@
             </ul>
             {{/if}}
             <div class="tab-content">
-                {{for prop ~length=prop.length}}
+                {{for prop ~length=prop.length ~viewonly=~viewonly}}
                 <div role="tabpanel" class="tab-pane {{if #index === (~length - 1)}}active{{/if}}" id="recipe-collapse-{{:RecipeId}}">
                     <div class="recipe" data-recipe="{{:RecipeId}}" data-name="{{:Name}}">
-                        <h3>{{:Name}}</h3>
+                        <h3><a href="/view/{{:RecipeId}}">{{:Name}}</a></h3>
                         <div class="media">
                             <div class="media-left">
                                 <dl class="dl-horizontal" style="margin-right: 60px;">
@@ -31,14 +31,16 @@
                             </div>
                             <div class="media-body">
                                 <div id="recipes-images-{{:RecipeId}}" class="row">
-                                    {{for Images ~info=DataInfo ~RecipeId=RecipeId ~UniqueId=UniqueId}}
+                                    {{for Images ~info=DataInfo ~RecipeId=RecipeId ~UniqueId=UniqueId ~viewonly=~viewonly}}
                                     <div class="col-md-3 col-sm-4 col-xs-6" style="width: auto;">
+                                        {{if !~viewonly}}
                                         <button type="submit" class="btn btn-danger btn-xs recipe-photo-delete" formaction="/data/{{:~UniqueId}}/photo/{{:#data}}" style="position: absolute; top: 3px; right: 5px; border-radius: 12px;">
                                             <span class="glyphicon glyphicon-remove"></span>
                                         </button>
                                         <span style="position: absolute; bottom: 25px; left: 25px;">
                                             <input type="radio" class="recipe-photo-primary" name="recipe-image-{{:~RecipeId}}-primary" formaction="/data/{{:~UniqueId}}/info" {{if ~info.primary === #data}}checked{{/if}} value="{{:#data}}" />
                                         </span>
+                                        {{/if}}
                                         <a href="#" class="thumbnail recipe-photo" data-id="{{:~UniqueId}}" data-image="{{:#data}}">
                                             <img src="/data/{{:~UniqueId}}/photo/{{:#data}}" alt="{{:#data}}" style="height: 160px;" />
                                         </a>
@@ -69,6 +71,7 @@
                             {{/for}}
                         </ol>
                         <p>{{html Notes /}}</p>
+                        {{if !~viewonly}}
                         <div class="btn-group btn-group-sm">
                             <button type="button" class="btn btn-primary" title="Revise recipe"
                                 onclick="$('#EditRecipeModal').trigger('editrecipe.load', Recipes.Find(parseInt($(this).closest('[data-recipe]').attr('data-recipe'), 10))).modal('show')">
@@ -79,6 +82,7 @@
                                 <span class="glyphicon glyphicon-picture"></span>&nbsp;Upload Image
                             </button>
                         </div>
+                        {{/if}}
                     </div>
                 </div>
                 {{/for}}
