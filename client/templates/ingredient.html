@@ -1,4 +1,4 @@
-<div class="ingredient">
+<div class="ingredient col-xl-6">
     <div class="media">
         <div class="media-body">
             <div class="panel panel-default">
@@ -39,7 +39,7 @@
         </div>
         <div class="media-right media-middle">
             <div class="btn-group btn-group-xs">
-                <button type="button" class="btn btn-danger" onclick="$(this).closest('.ingredient').remove(); $('#ingredients').trigger('editrecipe.reorder');">
+                <button type="button" class="btn btn-danger" tabindex="-1" onclick="$(this).closest('.ingredient').remove(); $('#ingredients').trigger('editrecipe.reorder');">
                     <span class="glyphicon glyphicon-minus"></span>
                 </button>
             </div>
