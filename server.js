@@ -42,7 +42,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use(function (err, request, response, next) {
     logger.exception(err);
-    response.status(500).send('An error has occurred.').end();
+    logger.sendError(response);
 });
 
 app.get('/', function (request, response) {
@@ -51,7 +51,7 @@ app.get('/', function (request, response) {
         fs.readFile(path.join(__dirname, 'client/index.html'), 'utf8', function (err, file) {
             if (err) {
                 logger.exception(err);
-                response.status(404).end();
+                logger.sendNotFound(response);
                 return;
             }
             
@@ -64,7 +64,7 @@ app.get('/', function (request, response) {
                 .end();
         });
     }).catch(function () {
-        response.redirect('/error');
+        logger.sendError(response);
     });
 });
 
@@ -79,7 +79,7 @@ app.get('/view/:id', function (request, response) {
         fs.readFile(path.join(__dirname, 'client/view.html'), 'utf8', function (err, file) {
             if (err) {
                 logger.exception(err);
-                response.status(404).end();
+                logger.sendNotFound(response);
                 return;
             }
             
@@ -92,12 +92,8 @@ app.get('/view/:id', function (request, response) {
                 .end();
         });
     }).catch(function () {
-        response.redirect('/error');
+        logger.sendError(response);
     });
-});
-
-app.get('/error', function(request, response) {
-    response.status(500).sendFile(path.join(__dirname, 'error/500.html'));
 });
 
 app.get('/recipes', function (request, response) {
@@ -106,7 +102,7 @@ app.get('/recipes', function (request, response) {
         response.json(data.Recipes);
     }).catch(function (err) {
         logger.exception(err);
-        response.redirect('/error');
+        logger.sendError(response);
     });
 });
 
@@ -121,7 +117,7 @@ app.get('/recipe/:id', function (request, response) {
         response.json(data);
     }).catch(function (err) {
         logger.exception(err);
-        response.redirect('/error');
+        logger.sendError(response);
     });
 });
 
@@ -139,7 +135,7 @@ app.delete('/recipe/:id', function (request, response) {
         response.end();
     }).catch(function (err) {
         logger.exception(err);
-        response.redirect('/error');
+        logger.sendError(response);
     });
 })
 
@@ -215,11 +211,11 @@ app.post('/recipe', function (request, response) {
             response.json(recipe);
         }).catch(function (err) {
             logger.exception(err);
-            response.redirect('/error');
+            logger.sendError(response);
         });
     }).catch(function (err) {
         logger.exception(err);
-        response.redirect('/error');
+        logger.sendError(response);
     });
 });
 
