@@ -60,4 +60,19 @@
             return (val || '').replace(/\n/g, '<br />');
         }
     });
+
+    $.breakpoint({
+        condition: function () {
+            return !$('#pager').is(':visible');
+        },
+        first_enter: function () {
+            $('#content').css('padding-right', '15px');
+        },
+        enter: function () {
+            $('#content').css('padding-right', '15px');
+        },
+        exit: function () {
+            $('#content').css('padding-right', '');
+        }
+    });
 }());
