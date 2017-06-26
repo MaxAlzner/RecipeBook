@@ -21,8 +21,8 @@ CREATE TABLE Password
 (
     PasswordId INT NOT NULL,
     UserId INT NOT NULL,
-    Hash VARCHAR(128) NULL,
-    Salt VARCHAR(64) NULL,
+    Hash VARCHAR(128) NOT NULL,
+    Salt VARCHAR(64) NOT NULL,
     CreatedAt DATETIME NOT NULL,
     
     CONSTRAINT PK_Password PRIMARY KEY (PasswordId),
