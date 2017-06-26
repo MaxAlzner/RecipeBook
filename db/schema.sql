@@ -2,6 +2,33 @@ CREATE DATABASE IF NOT EXISTS `RecipeBook` /*!40100 DEFAULT CHARACTER SET utf8 *
 
 USE `RecipeBook`;
 
+DROP TABLE IF EXISTS Password;
+DROP TABLE IF EXISTS User;
+
+CREATE TABLE User
+(
+    UserId INT NOT NULL AUTO_INCREMENT,
+    `Name` VARCHAR(128) NOT NULL,
+    CreatedAt DATETIME NOT NULL,
+    LastUpdated DATETIME NULL,
+    LastLogIn DATETIME NULL,
+    
+    CONSTRAINT PK_User PRIMARY KEY (UserId),
+    CONSTRAINT UNQ_UserName UNIQUE KEY (`Name`)
+);
+
+CREATE TABLE Password
+(
+    PasswordId INT NOT NULL,
+    UserId INT NOT NULL,
+    Hash VARCHAR(128) NULL,
+    Salt VARCHAR(64) NULL,
+    CreatedAt DATETIME NOT NULL,
+    
+    CONSTRAINT PK_Password PRIMARY KEY (PasswordId),
+    CONSTRAINT FK_Password_User FOREIGN KEY (UserId) REFERENCES User(UserId) ON DELETE CASCADE
+);
+
 DROP TABLE IF EXISTS Ingredient;
 DROP TABLE IF EXISTS Direction;
 DROP TABLE IF EXISTS Recipe;
@@ -28,9 +55,11 @@ CREATE TABLE Recipe
     Calories INT NULL,
     Notes VARCHAR(1024) NULL,
     Revision INT NOT NULL,
-    CreateDate DATETIME NOT NULL,
+    CreatedAt DATETIME NOT NULL,
+    CreatedBy INT NOT NULL,
     
     CONSTRAINT PK_Recipe PRIMARY KEY (RecipeId),
+    CONSTRAINT FK_Recipe_User FOREIGN KEY (CreatedBy) REFERENCES User(UserId),
     CONSTRAINT CHK_TotalTime CHECK (
 		((TotalTime IS NOT NULL AND (PrepTime IS NOT NULL OR CookTime IS NOT NULL)) OR
 		(TotalTime IS NULL AND PrepTime IS NULL AND CookTime IS NULL)) AND

@@ -1,6 +1,10 @@
 
 USE `RecipeBook`;
 
+INSERT INTO User(UserId, `Name`, CreatedAt)
+VALUES
+    (1, 'System', NOW());
+
 INSERT INTO Unit(`Code`, `Name`, ShortName)
 VALUES
 	('EA', 'Each', 'Each'),
@@ -18,9 +22,9 @@ VALUES
     ('LB', 'US Pound', 'Pound');
 
 
-INSERT INTO Recipe(RecipeId, UniqueId, `Name`, PrepTime, CookTime, TotalTime, Servings, Calories, Notes, Revision, CreateDate)
+INSERT INTO Recipe(RecipeId, UniqueId, `Name`, PrepTime, CookTime, TotalTime, Servings, Calories, Notes, Revision, CreatedAt, CreatedBy)
 VALUES
-	(1, UUID(), 'Pecan Pie', 15, 40, 65, 8, 313, 'Aluminum foil can be used to keep food moist, cook it evenly, and make clean-up easier.', 1, NOW());
+	(1, UUID(), 'Pecan Pie', 15, 40, 65, 8, 313, 'Aluminum foil can be used to keep food moist, cook it evenly, and make clean-up easier.', 1, NOW(), 1);
 INSERT INTO Ingredient(RecipeId, `Name`, UnitCode, Quantity, Section)
 VALUES
 	(1, 'light brown sugar', 'CUP', '1', NULL),
@@ -38,9 +42,9 @@ VALUES
 	(1, 3, 'Pour into an unbaked 9-in pie shell. Bake in preheated oven for 10 minutes at 400 degrees, then reduce temperature to 350 degrees and bake for 30 to 40 minutes, or until done.');
 
 
-INSERT INTO Recipe(RecipeId, UniqueId, `Name`, PrepTime, CookTime, TotalTime, Servings, Calories, Notes, Revision, CreateDate)
+INSERT INTO Recipe(RecipeId, UniqueId, `Name`, PrepTime, CookTime, TotalTime, Servings, Calories, Notes, Revision, CreatedAt, CreatedBy)
 VALUES
-    (2, UUID(), 'Butter Flaky Pie Crust', 15, NULL, 15, 8, 173, 'Aluminum foil can be used to keep food moist, cook it evenly, and make clean-up easier.', 1, NOW());
+    (2, UUID(), 'Butter Flaky Pie Crust', 15, NULL, 15, 8, 173, 'Aluminum foil can be used to keep food moist, cook it evenly, and make clean-up easier.', 1, NOW(), 1);
 INSERT INTO Ingredient(RecipeId, `Name`, UnitCode, Quantity, Section)
 VALUES
 	(2, 'all-purpose flour', 'CUP', '1 1/4', NULL),
@@ -53,7 +57,7 @@ VALUES
     (2, 2, 'Roll dough out to fit a 9 inch pie plate. Place crust in pie plate. Press the dough evenly into the bottom and sides of the pie plate.');
 
 
-INSERT INTO Recipe(RecipeId, UniqueId, `Name`, PrepTime, CookTime, TotalTime, Servings, Calories, Notes, Revision, CreateDate)
+INSERT INTO Recipe(RecipeId, UniqueId, `Name`, PrepTime, CookTime, TotalTime, Servings, Calories, Notes, Revision, CreatedAt, CreatedBy)
 VALUES
     (3, UUID(), 'Bran Muffins', 20, 20, 40, 12, 167, NULL, 1, NOW());
 INSERT INTO Ingredient(RecipeId, `Name`, UnitCode, Quantity, Section)
@@ -77,9 +81,9 @@ VALUES
     (3, 4, 'Bake for 15 to 20 minutes, or until a toothpick inserted into the center of a muffin comes out clean. Cool and enjoy!');
 
 
-INSERT INTO Recipe(RecipeId, UniqueId, `Name`, PrepTime, CookTime, TotalTime, Servings, Calories, Notes, Revision, CreateDate)
+INSERT INTO Recipe(RecipeId, UniqueId, `Name`, PrepTime, CookTime, TotalTime, Servings, Calories, Notes, Revision, CreatedAt, CreatedBy)
 VALUES
-    (4, UUID(), 'Banana Bread', 15, 65, 120, 12, 229, 'Aluminum foil can be used to keep food moist, cook it evenly, and make clean-up easier.', 1, NOW());
+    (4, UUID(), 'Banana Bread', 15, 65, 120, 12, 229, 'Aluminum foil can be used to keep food moist, cook it evenly, and make clean-up easier.', 1, NOW(), 1);
 INSERT INTO Ingredient(RecipeId, `Name`, UnitCode, Quantity, Section)
 VALUES
 	(4, 'all-purpose flour', 'CUP', '2', NULL),
@@ -96,9 +100,9 @@ VALUES
     (4, 3, 'Bake in preheated oven for 60 to 65 minutes, until a toothpick inserted into center of the loaf comes out clean. Let bread cool in pan for 10 minutes, then turn out onto a wire rack.');
 
 
-INSERT INTO Recipe(RecipeId, UniqueId, `Name`, PrepTime, CookTime, TotalTime, Servings, Calories, Notes, Revision, CreateDate)
+INSERT INTO Recipe(RecipeId, UniqueId, `Name`, PrepTime, CookTime, TotalTime, Servings, Calories, Notes, Revision, CreatedAt, CreatedBy)
 VALUES
-	(5, UUID(), 'Brownies', 25, 35, 60, 16, 183, NULL, 1, NOW());
+	(5, UUID(), 'Brownies', 25, 35, 60, 16, 183, NULL, 1, NOW(), 1);
 INSERT INTO Ingredient(RecipeId, `Name`, UnitCode, Quantity, Section)
 VALUES
 	(5, 'butter', 'CUP', '1/2', NULL),
