@@ -5,6 +5,7 @@ const path = require('path');
 
 const express = require('express');
 const bodyParser = require('body-parser');
+const cookieParser = require('cookie-parser');
 const formidable = require('formidable');
 
 const Promise = require('promise');
@@ -160,7 +161,7 @@ app.post('/recipe', function (request, response) {
     recipe.Servings = recipe.Servings || null;
     recipe.Calories = recipe.Calories || null;
     recipe.Notes = recipe.Notes || null;
-    recipe.CreateDate = (new Date()).toISOString().slice(0, 19).replace('T', ' ');
+    recipe.CreatedAt = (new Date()).toISOString().slice(0, 19).replace('T', ' ');
     recipe.Ingredients = recipe.Ingredients || [];
     recipe.Directions = recipe.Directions || [];
 
@@ -302,7 +303,8 @@ app.get(new RegExp('^.*\.(' + whitelist.join('|') + ')$'), function (request, re
     response.sendFile(path.join(__dirname, 'client', request.originalUrl));
 });
 
-const server = app.listen(process.env.PORT || 3000, process.env.IP || '127.0.0.1', function() {
+const env = process.env;
+const server = app.listen(env.PORT || 3000, env.IP || '127.0.0.1', function() {
   var addr = server.address();
   console.log('Server running at ' + addr.address + ':' + addr.port + '\n');
 });

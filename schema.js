@@ -50,7 +50,7 @@ const db = {
         Calories: Sequelize.INTEGER,
         Notes: Sequelize.STRING,
         Revision: Sequelize.INTEGER,
-        CreateDate: Sequelize.DATE
+        CreatedAt: Sequelize.DATE
     }),
     Ingredient: connection.define('Ingredient', {
         IngredientId: {
@@ -109,7 +109,7 @@ module.exports = {
                     include: [db.Ingredient, db.Direction]
                 }).then(function (result) {
                     var recipe = result.dataValues;
-                    recipe.CreateDate = recipe.CreateDate.toLocaleString();
+                    recipe.CreatedAt = recipe.CreatedAt.toLocaleString();
                     recipe.Ingredients = recipe.Ingredients.map(function (ingredient) {
                         ingredient = ingredient.dataValues;
                         ingredient.Section = ingredient.Section === null ? 0 : ingredient.Section;
@@ -172,7 +172,7 @@ module.exports = {
                     var recipes = result.map((node) => node.dataValues);
                     var dataFolders = fs.readdirSync(path.join(__dirname, 'data'));
                     recipes.forEach(function (row) {
-                        row.CreateDate = row.CreateDate.toLocaleString();
+                        row.CreatedAt = row.CreatedAt.toLocaleString();
                         row.Ingredients = row.Ingredients.map(function (ingredient) {
                             ingredient = ingredient.dataValues;
                             ingredient.Section = ingredient.Section === null ? 0 : ingredient.Section;
