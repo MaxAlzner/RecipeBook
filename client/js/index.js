@@ -306,7 +306,7 @@ var Recipes = (function () {
         .on('viewimage.load', function (e, data) {
             $('#ViewImageModalLabel').text(data.image);
             $('#viewimage')
-                .prop('src', '/data/' + data.id + '/photo/' + data.image)
+                .prop('src', '/photo/' + data.id + '/' + data.image)
                 .prop('alt', data.image);
         });
     
@@ -327,7 +327,7 @@ var Recipes = (function () {
             
             $.ajax({
                 type: 'PUT',
-                url: 'data/' + $('#uploadimage-uniqueid').val() + '/photo',
+                url: 'photo/' + $('#uploadimage-uniqueid').val(),
                 contentType: false,
                 processData: false,
                 cache: false,

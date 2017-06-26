@@ -1,3 +1,4 @@
+/*globals $ */
 
 (function () {
     'use strict';
@@ -25,7 +26,7 @@
         .on('viewimage.load', function (e, data) {
             $('#ViewImageModalLabel').text(data.image);
             $('#viewimage')
-                .prop('src', '/data/' + data.id + '/photo/' + data.image)
+                .prop('src', '/photo/' + data.id + '/' + data.image)
                 .prop('alt', data.image);
         });
 }());

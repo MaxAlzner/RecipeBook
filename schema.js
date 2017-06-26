@@ -133,7 +133,7 @@ module.exports = {
                             return /^.*.(.jpg|.jpeg|.png|.gif|.bmp|.ico|.svg|.svgz|.tif|.tiff)$/.test(file);
                         });
                         var info = {};
-                        var infoPath = path.join(__dirname, 'data', recipe.UniqueId, 'imageinfo.json');
+                        var infoPath = path.join(__dirname, 'data', recipe.UniqueId, 'info.json');
                         if (fs.existsSync(infoPath)) {
                             info = JSON.parse(fs.readFileSync(infoPath));
                             var index = images.indexOf(info.primary);
@@ -198,7 +198,7 @@ module.exports = {
                             return /^.*.(.jpg|.jpeg|.png|.gif|.bmp|.ico|.svg|.svgz|.tif|.tiff)$/.test(file);
                         }) : [];
                         var info = {};
-                        var infoPath = path.join(__dirname, 'data', key, 'imageinfo.json');
+                        var infoPath = path.join(__dirname, 'data', key, 'info.json');
                         if (fs.existsSync(infoPath)) {
                             info = JSON.parse(fs.readFileSync(infoPath));
                             var index = images.indexOf(info.primary);

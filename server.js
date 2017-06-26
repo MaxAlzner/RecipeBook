@@ -138,7 +138,7 @@ app.delete('/recipe/:id', function (request, response) {
         logger.exception(err);
         logger.sendError(response);
     });
-})
+});
 
 app.post('/recipe', function (request, response) {
     logger.request(request);
@@ -220,7 +220,19 @@ app.post('/recipe', function (request, response) {
     });
 });
 
-app.get('/data/:uid/photo/:image', function(request, response) {
+app.get('/photo/:uid', function(request, response) {
+    logger.request(request);
+    if (!request.params.uid) {
+        response.status(500).send('Recipe unique ID is required.').end();
+    }
+    
+    var folder = path.join(__dirname, 'data', request.params.uid);
+    response.json(fs.existsSync(folder) ? fs.readdirSync(folder).filter(function (file) {
+        return /^.*.(.jpg|.jpeg|.png|.gif|.bmp|.ico|.svg|.svgz|.tif|.tiff)$/.test(file);
+    }) : null);
+});
+
+app.get('/photo/:uid/:image', function(request, response) {
     logger.request(request);
     if (!request.params.uid) {
         response.status(500).send('Recipe unique ID is required.').end();
@@ -230,10 +242,16 @@ app.get('/data/:uid/photo/:image', function(request, response) {
         response.status(500).send('Image name is required.').end();
     }
     
-    response.sendFile(path.join(__dirname, 'data', request.params.uid, request.params.image));
+    var file = path.join(__dirname, 'data', request.params.uid, request.params.image);
+    if (fs.existsSync(file)) {
+        response.sendFile(path.join(__dirname, 'data', request.params.uid, request.params.image));
+    }
+    else {
+        response.status(404).send('Image does not exist.').end();
+    }
 });
 
-app.delete('/data/:uid/photo/:image', function(request, response) {
+app.delete('/photo/:uid/:image', function(request, response) {
     logger.request(request);
     if (!request.params.uid) {
         response.status(500).send('Recipe unique ID is required.').end();
@@ -253,9 +271,12 @@ app.delete('/data/:uid/photo/:image', function(request, response) {
             response.end();
         });
     }
+    else {
+        response.status(404).send('Image does not exist.').end();
+    }
 });
 
-app.put('/data/:uid/photo', function (request, response) {
+app.put('/photo/:uid', function (request, response) {
     logger.request(request);
     if (!request.params.uid) {
         response.status(500).send('Recipe unique ID is required.').end();
@@ -282,7 +303,17 @@ app.put('/data/:uid/photo', function (request, response) {
     form.parse(request);
 });
 
-app.post('/data/:uid/info', function (request, response) {
+app.get('/photoinfo/:uid', function(request, response) {
+    logger.request(request);
+    if (!request.params.uid) {
+        response.status(500).send('Recipe unique ID is required.').end();
+    }
+    
+    var file = path.join(__dirname, 'data', request.params.uid, 'info.json');
+    response.json(fs.existsSync(file) ? fs.readFileSync(file, 'utf8') : null);
+});
+
+app.post('/photoinfo/:uid', function (request, response) {
     logger.request(request);
     if (!request.params.uid) {
         response.status(500).send('Recipe unique ID is required.').end();
@@ -293,8 +324,7 @@ app.post('/data/:uid/info', function (request, response) {
         fs.mkdirSync(folder);
     }
     
-    fs.writeFileSync(path.join(folder, 'imageinfo.json'), JSON.stringify(request.body));
-    
+    fs.writeFileSync(path.join(folder, 'info.json'), request.body);
     response.end();
 });
 
