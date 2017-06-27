@@ -140,6 +140,10 @@ const _ext = {
     connection: connection,
     model: db,
     
+    now: function () {
+        return (new Date()).toISOString().slice(0, 19).replace('T', ' ');
+    },
+    
     getUnits: function () {
         return new Promise(function (resolve, reject) {
             db.Unit.findAll({

@@ -62,7 +62,6 @@ module.exports = function (app) {
     
     app.get('/', function (request, response) {
         logger.request(request);
-        console.log('session', request.session);
         schema.getUnits().then(function (units) {
             schema.getRecipes().then(function (recipes) {
                 router.render(response, 'list.html', {
@@ -104,6 +103,14 @@ module.exports = function (app) {
                 user.Passwords = user.Passwords.map(node => node.dataValues);
                 var password = user.Passwords.sort((a, b) => (new Date(a.CreatedAt)) - (new Date(b.CreatedAt)))[0];
                 if (bcrypt.hashSync(request.body.password, password.Salt) === password.Hash) {
+                    db.User.update({
+                        LastLogIn: schema.now()
+                    }, {
+                        where: { UserId: user.UserId }
+                    }).catch(function (err) {
+                        logger.exception(err);
+                    });
+                    
                     request.session.user = {
                         UserId: user.UserId,
                         Name: user.Name,
@@ -161,7 +168,7 @@ module.exports = function (app) {
                 var user = {
                     Name: request.body.name,
                     EmailAddress: request.body.email,
-                    CreatedAt: (new Date()).toISOString().slice(0, 19).replace('T', ' ')
+                    CreatedAt: schema.now()
                 };
                 
                 connection.transaction(function (t) {
@@ -173,7 +180,7 @@ module.exports = function (app) {
                             UserId: result.null,
                             Hash: hash,
                             Salt: salt,
-                            CreatedAt: (new Date()).toISOString().slice(0, 19).replace('T', ' ')
+                            CreatedAt: schema.now()
                         };
                         
                         return db.Password.create(password, { transaction: t });
@@ -284,7 +291,7 @@ module.exports = function (app) {
         recipe.Servings = recipe.Servings || null;
         recipe.Calories = recipe.Calories || null;
         recipe.Notes = recipe.Notes || null;
-        recipe.CreatedAt = (new Date()).toISOString().slice(0, 19).replace('T', ' ');
+        recipe.CreatedAt = schema.now();
         recipe.CreatedBy = request.session.user ? request.session.user.UserId : 1;
         recipe.Ingredients = recipe.Ingredients || [];
         recipe.Directions = recipe.Directions || [];
