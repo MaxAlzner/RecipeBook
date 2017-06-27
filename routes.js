@@ -208,7 +208,7 @@ module.exports = function (app) {
         if (isNaN(id)) {
             response.status(500).send('Recipe ID is not valid.').end();
         }
-    
+        
         schema.getRecipe(id).then(function (data) {
             router.render(response, 'view.html', {
                 User: request.session.user,
@@ -250,6 +250,7 @@ module.exports = function (app) {
         if (isNaN(id)) {
             response.status(500).send('Recipe ID is not valid.').end();
         }
+        
         db.Recipe.destroy({
             where: {
                 RecipeId: id
@@ -287,7 +288,7 @@ module.exports = function (app) {
         recipe.CreatedBy = request.session.user ? request.session.user.UserId : 1;
         recipe.Ingredients = recipe.Ingredients || [];
         recipe.Directions = recipe.Directions || [];
-    
+        
         recipe.Ingredients.forEach((ingredient) => {
             if (!ingredient.Name) {
                 response.status(500).send('Ingredient name is a required field.').end();
@@ -303,7 +304,7 @@ module.exports = function (app) {
     
             ingredient.Section = ingredient.Section || null;
         });
-    
+        
         recipe.Directions.forEach((direction) => {
             if (!direction.Step) {
                 response.status(500).send('Direction step is a required field.').end();
