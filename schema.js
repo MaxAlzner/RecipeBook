@@ -50,7 +50,8 @@ const db = {
         Calories: Sequelize.INTEGER,
         Notes: Sequelize.STRING,
         Revision: Sequelize.INTEGER,
-        CreatedAt: Sequelize.DATE
+        CreatedAt: Sequelize.DATE,
+        CreatedBy: Sequelize.INTEGER
     }),
     Ingredient: connection.define('Ingredient', {
         IngredientId: {

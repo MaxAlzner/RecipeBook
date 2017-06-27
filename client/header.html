@@ -1,0 +1,24 @@
+<nav id="header" class="navbar navbar-default">
+    <div class="container-fluid">
+        <div class="navbar-header">
+            <a class="navbar-brand" href="/">
+                Recipe Book
+            </a>
+        </div>
+        <div class="navbar-form navbar-right">
+            <div class="form-group">
+                <div class="btn-group">
+                    {{if ~loggedIn()}}
+                    <a href="#" class="btn btn-link">
+                        <span class="glyphicon glyphicon-log-out"></span>&nbsp;Log out
+                    </a>
+                    {{else}}
+                    <a href="#" class="btn btn-link">
+                        <span class="glyphicon glyphicon-log-in"></span>&nbsp;Log in
+                    </a>
+                    {{/if}}
+                </div>
+            </div>
+        </div>
+    </div>
+</nav>

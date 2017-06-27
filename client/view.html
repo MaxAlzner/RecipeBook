@@ -9,30 +9,17 @@
     <link rel="stylesheet" type="text/css" href="/css/site.css" />
 </head>
 <body>
-    <div class="page-header">
-        <div class="container">
-            <h1><a href="/">Recipe Book</a></h1>
-        </div>
-    </div>
     <div id="content" class="container">
+        {{partial "header.html" /}}
+        <div class="page-header">
+        </div>
         <div id="recipeview">
         </div>
     </div>
-    <div id="ViewImageModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="ViewImageModalLabel">
-        <div class="modal-dialog modal-lg" role="document">
-            <div class="modal-content">
-                <div class="modal-body">
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span class="glyphicon glyphicon-remove"></span></button>
-                    <div class="text-center">
-                        <img id="viewimage" class="img-responsive" />
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
+    {{partial "modals/ViewImageModal.html" /}}
     <div id="scripts" hidden>
         <input type="hidden" id="recipe" value="{{json #data /}}" />
-        {{template "recipeview.html" "RecipeViewTemplate" /}}
+        {{template "templates/recipeview.html" "RecipeViewTemplate" /}}
         <script type="text/javascript" src="/js/jquery-3.2.1.min.js"></script>
         <script type="text/javascript" src="/js/bootstrap.min.js"></script>
         <script type="text/javascript" src="/js/jquery.validate.min.js"></script>
@@ -41,6 +28,7 @@
         <script type="text/javascript" src="/js/fraction.min.js"></script>
         <script type="text/javascript" src="/js/site.js"></script>
         <script type="text/javascript" src="/js/view.js"></script>
+        <script type="text/javascript" src="/modals/ViewImageModal.js"></script>
     </div>
 </body>
 </html>

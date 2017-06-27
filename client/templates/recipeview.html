@@ -13,7 +13,7 @@
                 {{for prop ~length=prop.length ~viewonly=~viewonly}}
                 <div role="tabpanel" class="tab-pane {{if #index === (~length - 1)}}active{{/if}}" id="recipe-collapse-{{:RecipeId}}">
                     <div class="recipe" data-recipe="{{:RecipeId}}" data-name="{{:Name}}">
-                        <h3><a href="/view/{{:RecipeId}}">{{:Name}}</a></h3>
+                        <h3><a href="/recipe/{{:RecipeId}}">{{:Name}}</a></h3>
                         <div class="media">
                             <div class="media-left">
                                 <dl class="dl-horizontal" style="margin-right: 60px;">

@@ -34,8 +34,18 @@ jsrender.views.tags({
         return JSON.stringify(val).replace(/"/g, '&#34;').replace(/'/g, '&#39;');
     },
     template: function (file, name) {
-        var data = fs.readFileSync(path.join(__dirname, 'client/templates', file), 'utf8');
+        var data = fs.readFileSync(path.join(__dirname, 'client', file), 'utf8');
         return '<script id="' + name + '" type="text/x-jsrender">' + data + '</script>';
+    },
+    partial: function (file, data) {
+        var tmpl = jsrender.templates(fs.readFileSync(path.join(__dirname, 'client', file), 'utf8'));
+        var html = tmpl.render(data);
+        return html;
+    }
+});
+jsrender.views.helpers({
+    loggedIn: function () {
+        return false;
     }
 });
 
@@ -49,7 +59,7 @@ app.use(function (err, request, response, next) {
 app.get('/', function (request, response) {
     logger.request(request);
     schema.getRecipes().then(function (data) {
-        fs.readFile(path.join(__dirname, 'client/index.html'), 'utf8', function (err, file) {
+        fs.readFile(path.join(__dirname, 'client/list.html'), 'utf8', function (err, file) {
             if (err) {
                 logger.exception(err);
                 logger.sendNotFound(response);
@@ -69,7 +79,7 @@ app.get('/', function (request, response) {
     });
 });
 
-app.get('/view/:id', function (request, response) {
+app.get('/recipe/:id', function (request, response) {
     logger.request(request);
     var id = parseInt(request.params.id, 10);
     if (isNaN(id)) {
@@ -97,7 +107,7 @@ app.get('/view/:id', function (request, response) {
     });
 });
 
-app.get('/recipes', function (request, response) {
+app.get('/api/recipes', function (request, response) {
     logger.request(request);
     schema.getRecipes().then(function (data) {
         response.json(data.Recipes);
@@ -107,13 +117,13 @@ app.get('/recipes', function (request, response) {
     });
 });
 
-app.get('/recipe/:id', function (request, response) {
+app.get('/api/recipe/:id', function (request, response) {
     logger.request(request);
     var id = parseInt(request.params.id, 10);
     if (isNaN(id)) {
         response.status(500).send('Recipe ID is not valid.').end();
     }
-
+    
     schema.getRecipe(id).then(function (data) {
         response.json(data);
     }).catch(function (err) {
@@ -122,7 +132,7 @@ app.get('/recipe/:id', function (request, response) {
     });
 });
 
-app.delete('/recipe/:id', function (request, response) {
+app.delete('/api/recipe/:id', function (request, response) {
     logger.request(request);
     var id = parseInt(request.params.id, 10);
     if (isNaN(id)) {
@@ -140,7 +150,7 @@ app.delete('/recipe/:id', function (request, response) {
     });
 });
 
-app.post('/recipe', function (request, response) {
+app.post('/api/recipe', function (request, response) {
     logger.request(request);
     var recipe = request.body.recipe;
     if (!recipe) {
@@ -162,6 +172,7 @@ app.post('/recipe', function (request, response) {
     recipe.Calories = recipe.Calories || null;
     recipe.Notes = recipe.Notes || null;
     recipe.CreatedAt = (new Date()).toISOString().slice(0, 19).replace('T', ' ');
+    recipe.CreatedBy = 1;// TODO: Use current user.
     recipe.Ingredients = recipe.Ingredients || [];
     recipe.Directions = recipe.Directions || [];
 
@@ -324,7 +335,7 @@ app.post('/photoinfo/:uid', function (request, response) {
         fs.mkdirSync(folder);
     }
     
-    fs.writeFileSync(path.join(folder, 'info.json'), request.body);
+    fs.writeFileSync(path.join(folder, 'info.json'), JSON.stringify(request.body));
     response.end();
 });
 
@@ -335,6 +346,6 @@ app.get(new RegExp('^.*\.(' + whitelist.join('|') + ')$'), function (request, re
 
 const env = process.env;
 const server = app.listen(env.PORT || 3000, env.IP || '127.0.0.1', function() {
-  var addr = server.address();
-  console.log('Server running at ' + addr.address + ':' + addr.port + '\n');
+    var addr = server.address();
+    console.log('Server running at ' + addr.address + ':' + addr.port + '\n');
 });

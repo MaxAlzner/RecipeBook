@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recipe Book</title>
+    <link rel="stylesheet" type="text/css" href="css/bootstrap.min.css" />
+    <link rel="stylesheet" type="text/css" href="css/bootstrap-theme.min.css" />
+    <link rel="stylesheet" type="text/css" href="css/site.css" />
+</head>
+<body>
+    <div id="content" class="container">
+        {{partial "header.html" /}}
+        <div class="page-header">
+        </div>
+        <div id="controls" class="form-group">
+            <div class="btn-group btn-group-sm">
+                <button type="button" class="btn btn-success" title="Add new recipe" onclick="$('#EditRecipeModal').trigger('editrecipe.load', {}).modal('show')">
+                    <span class="glyphicon glyphicon-plus"></span>&nbsp;New Recipe
+                </button>
+            </div>
+        </div>
+        <div id="recipelist">
+        </div>
+    </div>
+    <div id="pager">
+        <ul class="zoom zoom-sm">
+            <li><a href="#" data-char="#">#</a></li>
+            <li><a href="#" data-char="A">A</a></li>
+            <li><a href="#" data-char="B">B</a></li>
+            <li><a href="#" data-char="C">C</a></li>
+            <li><a href="#" data-char="E">E</a></li>
+            <li><a href="#" data-char="D">D</a></li>
+            <li><a href="#" data-char="F">F</a></li>
+            <li><a href="#" data-char="G">G</a></li>
+            <li><a href="#" data-char="H">H</a></li>
+            <li><a href="#" data-char="I">I</a></li>
+            <li><a href="#" data-char="J">J</a></li>
+            <li><a href="#" data-char="K">K</a></li>
+            <li><a href="#" data-char="L">L</a></li>
+            <li><a href="#" data-char="M">M</a></li>
+            <li><a href="#" data-char="N">N</a></li>
+            <li><a href="#" data-char="O">O</a></li>
+            <li><a href="#" data-char="P">P</a></li>
+            <li><a href="#" data-char="Q">Q</a></li>
+            <li><a href="#" data-char="R">R</a></li>
+            <li><a href="#" data-char="S">S</a></li>
+            <li><a href="#" data-char="T">T</a></li>
+            <li><a href="#" data-char="U">U</a></li>
+            <li><a href="#" data-char="V">V</a></li>
+            <li><a href="#" data-char="W">W</a></li>
+            <li><a href="#" data-char="X">X</a></li>
+            <li><a href="#" data-char="Y">Y</a></li>
+            <li><a href="#" data-char="Z">Z</a></li>
+        </ul>
+    </div>
+    {{partial "modals/EditRecipeModal.html" /}}
+    {{partial "modals/UploadImageModal.html" /}}
+    {{partial "modals/ViewImageModal.html" /}}
+    <div id="scripts" hidden>
+        <input type="hidden" id="recipes" value="{{json Recipes /}}" />
+        <input type="hidden" id="units" value="{{json Units /}}" />
+        {{template "templates/recipeview.html" "RecipeViewTemplate" /}}
+        {{template "templates/ingredient.html" "IngredientTemplate" /}}
+        {{template "templates/direction.html" "DirectionTemplate" /}}
+        <script type="text/javascript" src="js/jquery-3.2.1.min.js"></script>
+        <script type="text/javascript" src="js/bootstrap.min.js"></script>
+        <script type="text/javascript" src="js/jquery.validate.min.js"></script>
+        <script type="text/javascript" src="js/jquery.breakpoint-min.js"></script>
+        <script type="text/javascript" src="js/jsrender.min.js"></script>
+        <script type="text/javascript" src="js/fraction.min.js"></script>
+        <script type="text/javascript" src="js/site.js"></script>
+        <script type="text/javascript" src="js/index.js"></script>
+        <script type="text/javascript" src="modals/EditRecipeModal.js"></script>
+        <script type="text/javascript" src="modals/UploadImageModal.js"></script>
+        <script type="text/javascript" src="modals/ViewImageModal.js"></script>
+    </div>
+</body>
+</html>

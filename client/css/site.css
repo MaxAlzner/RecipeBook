@@ -12,6 +12,11 @@ textarea.form-control {
     padding: 5px 8px;
 }
 
+#header {
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+}
+
 #pager {
     position: fixed;
     right: 0;
