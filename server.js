@@ -41,6 +41,22 @@ jsrender.views.tags({
         var tmpl = jsrender.templates(fs.readFileSync(path.join(__dirname, 'client', file), 'utf8'));
         var html = tmpl.render(data);
         return html;
+    },
+    scriptBundle: function () {
+        var scripts = [];
+        Array.from(arguments).forEach(function (file) {
+            scripts.push(fs.readFileSync(path.join(__dirname, 'client', file), 'utf8'));
+        });
+        
+        return '<script type="text/javascript">' + scripts.join('\n') + '</script>';
+    },
+    styleBundle: function () {
+        var styles = [];
+        Array.from(arguments).forEach(function (file) {
+            styles.push(fs.readFileSync(path.join(__dirname, 'client', file), 'utf8'));
+        });
+        
+        return '<style type="text/css">' + styles.join('\n') + '</style>';
     }
 });
 jsrender.views.helpers({

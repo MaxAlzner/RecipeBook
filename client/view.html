@@ -4,9 +4,11 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Recipe Book</title>
-    <link rel="stylesheet" type="text/css" href="/css/bootstrap.min.css" />
-    <link rel="stylesheet" type="text/css" href="/css/bootstrap-theme.min.css" />
-    <link rel="stylesheet" type="text/css" href="/css/site.css" />
+    {{styleBundle
+        "css/bootstrap.css"
+        "css/bootstrap-theme.css"
+        "css/site.css"
+    /}}
 </head>
 <body>
     <div id="content" class="container">
@@ -20,15 +22,17 @@
     <div id="scripts" hidden>
         <input type="hidden" id="recipe" value="{{json #data /}}" />
         {{template "templates/recipeview.html" "RecipeViewTemplate" /}}
-        <script type="text/javascript" src="/js/jquery-3.2.1.min.js"></script>
-        <script type="text/javascript" src="/js/bootstrap.min.js"></script>
-        <script type="text/javascript" src="/js/jquery.validate.min.js"></script>
-        <script type="text/javascript" src="/js/jquery.breakpoint-min.js"></script>
-        <script type="text/javascript" src="/js/jsrender.min.js"></script>
-        <script type="text/javascript" src="/js/fraction.min.js"></script>
-        <script type="text/javascript" src="/js/site.js"></script>
-        <script type="text/javascript" src="/js/view.js"></script>
-        <script type="text/javascript" src="/modals/ViewImageModal.js"></script>
+        {{scriptBundle
+            "js/jquery-3.2.1.js"
+            "js/bootstrap.js"
+            "js/jquery.validate.js"
+            "js/jquery.breakpoint.js"
+            "js/jsrender.js"
+            "js/fraction.js"
+            "js/site.js"
+            "js/view.js"
+            "modals/ViewImageModal.js"
+        /}}
     </div>
 </body>
 </html>
