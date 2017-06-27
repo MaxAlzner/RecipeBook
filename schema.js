@@ -28,6 +28,33 @@ const connection = new Sequelize(dbconfig.database, dbconfig.user, dbconfig.pass
 });
 
 const db = {
+    User: connection.define('User', {
+        UserId: {
+            type: Sequelize.INTEGER,
+            primaryKey: true
+        },
+        Name: Sequelize.STRING,
+        EmailAddress: Sequelize.STRING,
+        CreatedAt: Sequelize.DATE,
+        LastUpdated: Sequelize.DATE,
+        LastLogIn: Sequelize.DATE
+    }),
+    Password: connection.define('Password', {
+        PasswordId: {
+            type: Sequelize.INTEGER,
+            primaryKey: true
+        },
+        UserId: {
+            type: Sequelize.INTEGER,
+            references: {
+                model: 'User',
+                key: 'UserId'
+            }
+        },
+        Hash: Sequelize.STRING,
+        Salt: Sequelize.STRING,
+        CreatedAt: Sequelize.DATE
+    }),
     Unit: connection.define('Unit', {
         Code: {
             type: Sequelize.STRING,
@@ -51,7 +78,13 @@ const db = {
         Notes: Sequelize.STRING,
         Revision: Sequelize.INTEGER,
         CreatedAt: Sequelize.DATE,
-        CreatedBy: Sequelize.INTEGER
+        CreatedBy: {
+            type: Sequelize.INTEGER,
+            references: {
+                model: 'User',
+                key: 'UserId'
+            }
+        }
     }),
     Ingredient: connection.define('Ingredient', {
         IngredientId: {
@@ -60,14 +93,18 @@ const db = {
         },
         RecipeId: {
             type: Sequelize.INTEGER,
-            references: 'Recipe',
-            referencesKey: 'RecipeId'
+            references: {
+                model: 'Recipe',
+                key: 'RecipeId'
+            }
         },
         Name: Sequelize.STRING,
         UnitCode: {
             type: Sequelize.STRING,
-            references: 'Unit',
-            referencesKey: 'Code'
+            references: {
+                model: 'Unit',
+                key: 'Code'
+            }
         },
         Quantity: Sequelize.STRING,
         Section: Sequelize.STRING
@@ -79,23 +116,43 @@ const db = {
         },
         RecipeId: {
             type: Sequelize.INTEGER,
-            references: 'Recipe',
-            referencesKey: 'RecipeId'
+            references: {
+                model: 'Recipe',
+                key: 'RecipeId'
+            }
         },
         Step: Sequelize.INTEGER,
         Description: Sequelize.STRING
     })
 };
+
+db.User.hasMany(db.Password, { foreignKey: 'UserId' });
+db.Password.hasOne(db.User, { foreignKey: 'UserId' });
+// db.Recipe.hasOne(db.User, { foreignKey: 'CreatedBy', targetKey: 'UserId' });
 db.Recipe.hasMany(db.Ingredient, { foreignKey: 'RecipeId' });
 db.Recipe.hasMany(db.Direction, { foreignKey: 'RecipeId' });
 db.Ingredient.hasOne(db.Recipe, { foreignKey: 'RecipeId' });
-db.Ingredient.hasOne(db.Unit, { foreignKey: 'Code', targetKey: 'UnitCode' });
+// db.Ingredient.hasOne(db.Unit, { foreignKey: 'Code', targetKey: 'UnitCode' });
 db.Direction.hasOne(db.Recipe, { foreignKey: 'RecipeId' });
 db.Unit.hasMany(db.Ingredient, { foreignKey: 'UnitCode' });
 
-module.exports = {
+const _ext = {
     connection: connection,
     model: db,
+    
+    getUnits: function () {
+        return new Promise(function (resolve, reject) {
+            db.Unit.findAll({
+                order: ['Name']
+            }).then(function (units) {
+                units = units.map((node) => node.dataValues);
+                resolve(units);
+            }).catch(function (err) {
+                logger.exception(err);
+                reject();
+            });
+        });
+    },
 
     getRecipe: function (id) {
         return new Promise(function (resolve, reject) {
@@ -163,10 +220,7 @@ module.exports = {
     
     getRecipes: function () {
         return new Promise(function (resolve, reject) {
-            db.Unit.findAll({
-                order: ['Name']
-            }).then(function (units) {
-                units = units.map((node) => node.dataValues);
+            _ext.getUnits().then(function (units) {
                 db.Recipe.findAll({
                     include: [db.Ingredient, db.Direction]
                 }).then(function (result) {
@@ -216,19 +270,15 @@ module.exports = {
                         });
                     }
                     
-                    resolve({
-                        Recipes: recipes,
-                        Units: units    
-                    });
+                    resolve(recipes);
                 }).catch(function (err) {
                     logger.exception(err);
                     reject();
                 });
-            }).catch(function (err) {
-                logger.exception(err);
-                reject();
             });
         });
     }
     
 };
+
+module.exports = _ext;

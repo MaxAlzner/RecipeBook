@@ -1,9 +1,9 @@
 
 USE `RecipeBook`;
 
-INSERT INTO User(UserId, `Name`, CreatedAt)
+INSERT INTO User(UserId, `Name`, EmailAddress, CreatedAt)
 VALUES
-    (1, 'System', NOW());
+    (1, 'System', 'admin@recipebook.com', NOW());
 
 INSERT INTO Unit(`Code`, `Name`, ShortName)
 VALUES

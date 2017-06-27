@@ -8,12 +8,12 @@
         <div class="navbar-form navbar-right">
             <div class="form-group">
                 <div class="btn-group">
-                    {{if ~loggedIn()}}
-                    <a href="#" class="btn btn-link">
+                    {{if !!#data}}
+                    <a href="/logout" class="btn btn-link">
                         <span class="glyphicon glyphicon-log-out"></span>&nbsp;Log out
                     </a>
                     {{else}}
-                    <a href="#" class="btn btn-link">
+                    <a href="/login" class="btn btn-link">
                         <span class="glyphicon glyphicon-log-in"></span>&nbsp;Log in
                     </a>
                     {{/if}}

@@ -27,7 +27,7 @@ if (!fs.existsSync(path.join(__dirname, 'data'))) {
 
 jsrender.views.tags({
     json: function (val) {
-        return JSON.stringify(val).replace(/"/g, '&#34;').replace(/'/g, '&#39;');
+        return JSON.stringify(val || null).replace(/"/g, '&#34;').replace(/'/g, '&#39;');
     },
     template: function (file, name) {
         var data = fs.readFileSync(path.join(__dirname, 'client', file), 'utf8');
@@ -43,7 +43,6 @@ jsrender.views.tags({
         Array.from(arguments).forEach(function (file) {
             scripts.push(fs.readFileSync(path.join(__dirname, 'client', file), 'utf8'));
         });
-        
         return '<script type="text/javascript">' + scripts.join('\n') + '</script>';
     },
     styleBundle: function () {
@@ -51,14 +50,10 @@ jsrender.views.tags({
         Array.from(arguments).forEach(function (file) {
             styles.push(fs.readFileSync(path.join(__dirname, 'client', file), 'utf8'));
         });
-        
         return '<style type="text/css">' + styles.join('\n') + '</style>';
     }
 });
 jsrender.views.helpers({
-    loggedIn: function () {
-        return false;
-    }
 });
 
 const app = express();

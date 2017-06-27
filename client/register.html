@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recipe Book</title>
+    {{styleBundle
+        "css/bootstrap.css"
+        "css/bootstrap-theme.css"
+        "css/site.css"
+    /}}
+</head>
+<body>
+    <div id="content" class="container">
+        {{partial "header.html" User /}}
+        <div class="page-header">
+        </div>
+        <div class="row">
+            <div class="col-lg-6 col-lg-offset-3">
+                <div class="panel panel-primary">
+                    <div class="panel-body">
+                        <form id="register" class="form-horizontal" action="register" method="post" novalidate="novalidate">
+                            <div class="form-group">
+                                <label for="register-name" class="col-sm-3 control-label">Name</label>
+                                <div class="col-sm-9">
+                                    <input type="text" id="register-name" class="form-control" name="name" required="required" maxlength="128" minlength="2" />
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="register-email" class="col-sm-3 control-label">E-mail</label>
+                                <div class="col-sm-9">
+                                    <input type="email" id="register-email" class="form-control" name="email" required="required" maxlength="256" />
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="register-password" class="col-sm-3 control-label">Password</label>
+                                <div class="col-sm-9">
+                                    <input type="password" id="register-password" class="form-control" name="password" required="required" maxlength="256" minlength="4" />
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="register-password2" class="col-sm-3 control-label"></label>
+                                <div class="col-sm-9">
+                                    <input type="password" id="register-password2" class="form-control" name="password2" required="required" maxlength="256" minlength="4" />
+                                </div>
+                            </div>
+                            {{if Message}}
+                            <div class="alert alert-warning alert-dismissible" role="alert">
+                                <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                                <span>{{:Message}}</span>
+                            </div>
+                            {{/if}}
+                            <div class="text-right">
+                                <div class="btn-group">
+                                    <a href="/login" class="btn btn-default">
+                                        Log in
+                                    </a>
+                                    <button type="submit" class="btn btn-primary">
+                                        Submit
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="scripts" hidden>
+        {{template "templates/recipeview.html" "RecipeViewTemplate" /}}
+        {{scriptBundle
+            "js/jquery-3.2.1.js"
+            "js/bootstrap.js"
+            "js/jquery.validate.js"
+            "js/jquery.breakpoint.js"
+            "js/jsrender.js"
+            "js/fraction.js"
+            "js/site.js"
+            "js/register.js"
+        /}}
+    </div>
+</body>
+</html>

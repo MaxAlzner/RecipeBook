@@ -9,17 +9,19 @@ CREATE TABLE User
 (
     UserId INT NOT NULL AUTO_INCREMENT,
     `Name` VARCHAR(128) NOT NULL,
+    EmailAddress VARCHAR(255) NOT NULL,
     CreatedAt DATETIME NOT NULL,
     LastUpdated DATETIME NULL,
     LastLogIn DATETIME NULL,
     
     CONSTRAINT PK_User PRIMARY KEY (UserId),
-    CONSTRAINT UNQ_UserName UNIQUE KEY (`Name`)
+    CONSTRAINT UNQ_UserName UNIQUE KEY (`Name`),
+    CONSTRAINT UNQ_EmailAddress UNIQUE KEY (EmailAddress)
 );
 
 CREATE TABLE Password
 (
-    PasswordId INT NOT NULL,
+    PasswordId INT NOT NULL AUTO_INCREMENT,
     UserId INT NOT NULL,
     Hash VARCHAR(128) NOT NULL,
     Salt VARCHAR(64) NOT NULL,

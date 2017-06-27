@@ -12,7 +12,7 @@
 </head>
 <body>
     <div id="content" class="container">
-        {{partial "header.html" /}}
+        {{partial "header.html" User /}}
         <div class="page-header">
         </div>
         <div id="recipeview">
@@ -20,7 +20,7 @@
     </div>
     {{partial "modals/ViewImageModal.html" /}}
     <div id="scripts" hidden>
-        <input type="hidden" id="recipe" value="{{json #data /}}" />
+        <input type="hidden" id="recipe" value="{{json Recipe /}}" />
         {{template "templates/recipeview.html" "RecipeViewTemplate" /}}
         {{scriptBundle
             "js/jquery-3.2.1.js"
