@@ -1,3 +1,5 @@
 {
-    "session_secret": ""
+    "session_secret": "",
+    "cookie_secure": true,
+    "cookie_timeout": 3600000
 }

@@ -37,7 +37,7 @@ const router = {
 };
 
 module.exports = function (app) {
-    
+
     app.use(bodyParser.urlencoded({ extended: true }));
     app.use(bodyParser.json());
     app.use(cookieParser());
@@ -45,7 +45,7 @@ module.exports = function (app) {
         logger.exception(err);
         logger.sendError(response);
     });
-    
+
     app.set('trust proxy', 1);
     app.use(session({
         genid: function() {
@@ -55,13 +55,14 @@ module.exports = function (app) {
         saveUninitialized: true,
         secret: appconfig.session_secret,
         cookie: {
-            secure: true,
-            maxAge: (1000 * 60 * 60) // 1 hour
+            secure: appconfig.cookie_secure,
+            maxAge: appconfig.cookie_timeout
         }
     }));
-    
+
     app.get('/', function (request, response) {
         logger.request(request);
+        console.log(request.session);
         schema.getUnits().then(function (units) {
             schema.getRecipes().then(function (recipes) {
                 router.render(response, 'list.html', {
@@ -76,14 +77,15 @@ module.exports = function (app) {
             logger.sendError(response);
         });
     });
-    
+
     app.get('/login', function(request, response) {
         logger.request(request);
+        console.log(request.session);
         router.render(response, 'login.html', {
             User: request.session.user
         });
     });
-    
+
     app.post('/login', function(request, response) {
         logger.request(request);
         if (!request.body.email || !request.body.password) {
@@ -91,7 +93,7 @@ module.exports = function (app) {
                 Message: 'Parameters are invalid.'
             });
         }
-        
+
         db.User.findOne({
             where: {
                 EmailAddress: request.body.email
@@ -110,7 +112,7 @@ module.exports = function (app) {
                     }).catch(function (err) {
                         logger.exception(err);
                     });
-                    
+
                     request.session.user = {
                         UserId: user.UserId,
                         Name: user.Name,
@@ -136,20 +138,20 @@ module.exports = function (app) {
             logger.sendError(response);
         });
     });
-    
+
     app.get('/logout', function(request, response) {
         logger.request(request);
         delete request.session.user;
         response.redirect('/');
     });
-    
+
     app.get('/register', function(request, response) {
         logger.request(request);
         router.render(response, 'register.html', {
             User: request.session.user
         });
     });
-    
+
     app.post('/register', function(request, response) {
         logger.request(request);
         if (!request.body.name || !request.body.email || !request.body.password) {
@@ -158,7 +160,7 @@ module.exports = function (app) {
                 Message: 'Parameters are invalid.'
             });
         }
-        
+
         db.User.findOne({
             where: {
                 Name: request.body.name
@@ -170,7 +172,7 @@ module.exports = function (app) {
                     EmailAddress: request.body.email,
                     CreatedAt: schema.now()
                 };
-                
+
                 connection.transaction(function (t) {
                     return db.User.create(user, { transaction: t }).then(function (result) {
                         user.UserId = result.null;
@@ -182,7 +184,7 @@ module.exports = function (app) {
                             Salt: salt,
                             CreatedAt: schema.now()
                         };
-                        
+
                         return db.Password.create(password, { transaction: t });
                     });
                 }).then(function (result) {
@@ -208,14 +210,14 @@ module.exports = function (app) {
             logger.sendError(response);
         });
     });
-    
+
     app.get('/recipe/:id', function (request, response) {
         logger.request(request);
         var id = parseInt(request.params.id, 10);
         if (isNaN(id)) {
             response.status(500).send('Recipe ID is not valid.').end();
         }
-        
+
         schema.getRecipe(id).then(function (data) {
             router.render(response, 'view.html', {
                 User: request.session.user,
@@ -225,7 +227,7 @@ module.exports = function (app) {
             logger.sendError(response);
         });
     });
-    
+
     app.get('/api/recipes', function (request, response) {
         logger.request(request);
         schema.getRecipes().then(function (data) {
@@ -235,14 +237,14 @@ module.exports = function (app) {
             logger.sendError(response);
         });
     });
-    
+
     app.get('/api/recipe/:id', function (request, response) {
         logger.request(request);
         var id = parseInt(request.params.id, 10);
         if (isNaN(id)) {
             response.status(500).send('Recipe ID is not valid.').end();
         }
-        
+
         schema.getRecipe(id).then(function (data) {
             response.json(data);
         }).catch(function (err) {
@@ -250,14 +252,14 @@ module.exports = function (app) {
             logger.sendError(response);
         });
     });
-    
+
     app.delete('/api/recipe/:id', function (request, response) {
         logger.request(request);
         var id = parseInt(request.params.id, 10);
         if (isNaN(id)) {
             response.status(500).send('Recipe ID is not valid.').end();
         }
-        
+
         db.Recipe.destroy({
             where: {
                 RecipeId: id
@@ -269,22 +271,22 @@ module.exports = function (app) {
             logger.sendError(response);
         });
     });
-    
+
     app.post('/api/recipe', function (request, response) {
         logger.request(request);
         var recipe = request.body.recipe;
         if (!recipe) {
             response.status(500).send('No data sent.').end();
         }
-        
+
         if (!recipe.Name) {
             response.status(500).send('Recipe name is a required field.').end();
         }
-        
+
         if (!recipe.UniqueId) {
             recipe.UniqueId = uuid();
         }
-        
+
         recipe.PrepTime = recipe.PrepTime || null;
         recipe.CookTime = recipe.CookTime || null;
         recipe.TotalTime = recipe.TotalTime || null;
@@ -295,33 +297,33 @@ module.exports = function (app) {
         recipe.CreatedBy = request.session.user ? request.session.user.UserId : 1;
         recipe.Ingredients = recipe.Ingredients || [];
         recipe.Directions = recipe.Directions || [];
-        
+
         recipe.Ingredients.forEach((ingredient) => {
             if (!ingredient.Name) {
                 response.status(500).send('Ingredient name is a required field.').end();
             }
-            
+
             if (!ingredient.UnitCode) {
                 response.status(500).send('Ingredient unit is a required field.').end();
             }
-            
+
             if (!ingredient.Quantity) {
                 response.status(500).send('Ingredient quantity is a required field.').end();
             }
-    
+
             ingredient.Section = ingredient.Section || null;
         });
-        
+
         recipe.Directions.forEach((direction) => {
             if (!direction.Step) {
                 response.status(500).send('Direction step is a required field.').end();
             }
-            
+
             if (!direction.Description) {
                 response.status(500).send('Direction description is a required field.').end();
             }
         });
-        
+
         db.Recipe.findOne({
             attributes: ['Revision'],
             where: { UniqueId: recipe.UniqueId },
@@ -329,12 +331,12 @@ module.exports = function (app) {
         }).then(function (rev) {
             rev = (rev ? rev.dataValues.Revision : 0) + 1;
             recipe.Revision = rev;
-            
+
             connection.transaction(function (t) {
                 return db.Recipe.create(recipe, { transaction: t }).then(function (result) {
                     recipe.Ingredients.forEach((ingredient) => ingredient.RecipeId = result.null);
                     recipe.Directions.forEach((direction) => direction.RecipeId = result.null);
-                    
+
                     return db.Ingredient.bulkCreate(recipe.Ingredients, { transaction: t }).then(function () {
                         return db.Direction.bulkCreate(recipe.Directions, { transaction: t });
                     });
@@ -350,29 +352,29 @@ module.exports = function (app) {
             logger.sendError(response);
         });
     });
-    
+
     app.get('/photo/:uid', function(request, response) {
         logger.request(request);
         if (!request.params.uid) {
             response.status(500).send('Recipe unique ID is required.').end();
         }
-        
+
         var folder = path.join(__dirname, 'data', request.params.uid);
         response.json(fs.existsSync(folder) ? fs.readdirSync(folder).filter(function (file) {
             return /^.*.(.jpg|.jpeg|.png|.gif|.bmp|.ico|.svg|.svgz|.tif|.tiff)$/.test(file);
         }) : null);
     });
-    
+
     app.get('/photo/:uid/:image', function(request, response) {
         logger.request(request);
         if (!request.params.uid) {
             response.status(500).send('Recipe unique ID is required.').end();
         }
-        
+
         if (!request.params.image) {
             response.status(500).send('Image name is required.').end();
         }
-        
+
         var file = path.join(__dirname, 'data', request.params.uid, request.params.image);
         if (fs.existsSync(file)) {
             response.sendFile(path.join(__dirname, 'data', request.params.uid, request.params.image));
@@ -381,24 +383,24 @@ module.exports = function (app) {
             response.status(404).send('Image does not exist.').end();
         }
     });
-    
+
     app.delete('/photo/:uid/:image', function(request, response) {
         logger.request(request);
         if (!request.params.uid) {
             response.status(500).send('Recipe unique ID is required.').end();
         }
-        
+
         if (!request.params.image) {
             response.status(500).send('Image name is required.').end();
         }
-        
+
         var file = path.join(__dirname, 'data', request.params.uid, request.params.image);
         if (fs.existsSync(file)) {
             fs.unlink(file, function (err) {
                 if (err ) {
                     logger.exception(err);
                 }
-                
+
                 response.end();
             });
         }
@@ -406,18 +408,18 @@ module.exports = function (app) {
             response.status(404).send('Image does not exist.').end();
         }
     });
-    
+
     app.put('/photo/:uid', function (request, response) {
         logger.request(request);
         if (!request.params.uid) {
             response.status(500).send('Recipe unique ID is required.').end();
         }
-        
+
         var folder = path.join(__dirname, 'data', request.params.uid);
         if (!fs.existsSync(folder)) {
             fs.mkdirSync(folder);
         }
-        
+
         var form = new formidable.IncomingForm();
         form.multiples = true;
         form.uploadDir = folder;
@@ -433,32 +435,32 @@ module.exports = function (app) {
         });
         form.parse(request);
     });
-    
+
     app.get('/photoinfo/:uid', function(request, response) {
         logger.request(request);
         if (!request.params.uid) {
             response.status(500).send('Recipe unique ID is required.').end();
         }
-        
+
         var file = path.join(__dirname, 'data', request.params.uid, 'info.json');
         response.json(fs.existsSync(file) ? fs.readFileSync(file, 'utf8') : null);
     });
-    
+
     app.post('/photoinfo/:uid', function (request, response) {
         logger.request(request);
         if (!request.params.uid) {
             response.status(500).send('Recipe unique ID is required.').end();
         }
-        
+
         var folder = path.join(__dirname, 'data', request.params.uid);
         if (!fs.existsSync(folder)) {
             fs.mkdirSync(folder);
         }
-        
+
         fs.writeFileSync(path.join(folder, 'info.json'), JSON.stringify(request.body));
         response.end();
     });
-    
+
     app.get(new RegExp('^.*\.(' + whitelist.join('|') + ')$'), function (request, response) {
         logger.request(request);
         response.sendFile(path.join(__dirname, 'client', request.originalUrl));
