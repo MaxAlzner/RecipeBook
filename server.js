@@ -35,7 +35,7 @@ jsrender.views.tags({
     },
     partial: function (file, data) {
         var tmpl = jsrender.templates(fs.readFileSync(path.join(__dirname, 'client', file), 'utf8'));
-        var html = tmpl.render(data);
+        var html = tmpl.render(data, true);
         return html;
     },
     scriptBundle: function () {

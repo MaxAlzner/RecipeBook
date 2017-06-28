@@ -289,13 +289,17 @@ module.exports = function (app) {
             return;
         }
 
-        router.render(response, 'admin.html', {
-            User: request.session.user
+        schema.getPermissions().then(function (permissions) {
+            router.render(response, 'admin.html', {
+                User: request.session.user,
+                Permissions: permissions
+            });
+        }).catch(function () {
+            logger.sendError(response);
         });
     });
 
     app.post('/admin/users', function(request, response) {
-        console.log(request.body);
         logger.request(request);
         if (!request.session.user) {
             response.redirect('/login');
@@ -303,23 +307,62 @@ module.exports = function (app) {
         }
 
         var params = {
-            attributes: request.body.columns.map(column => column.data).filter(column => !!column)
+            include: [db.Permission],
+            offset: parseInt(request.body.start, 10) || 0,
+            limit: parseInt(request.body.length, 10) || 10
         };
         if (request.body.order.length > 0) {
             var order = request.body.order[0];
             params.order = [[request.body.columns[order.column].data, order.dir]];
         }
 
-        var start = parseInt(request.body.start, 10) || 0;
-        var end = (parseInt(request.body.length, 10) || 0) + start;
-        db.User.findAll(params).then(function (result) {
-            var users = result.map(node => node.dataValues);
-            var filtered = users.slice(start, end);
-            response.json({
-                draw: request.body.draw,
-                recordsTotal: users.length,
-                recordsFiltered: filtered.length,
-                data: filtered
+        db.User.count().then(function (total) {
+            db.User.findAll(params).then(function (result) {
+                var users = result.map(node => node.dataValues);
+                response.json({
+                    draw: request.body.draw,
+                    recordsTotal: total,
+                    recordsFiltered: users.length,
+                    data: users
+                });
+            }).catch(function (err) {
+                logger.exception(err);
+                logger.sendError(response);
+            });
+        }).catch(function (err) {
+            logger.exception(err);
+            logger.sendError(response);
+        });
+    });
+
+    app.post('/admin/userpermission', function(request, response) {
+        logger.request(request);
+        if (!request.session.user) {
+            response.redirect('/login');
+            return;
+        }
+
+        if (!request.body.userId || !request.body.permissions) {
+            response.status(500).send('Parameters are invalid.').end();
+        }
+
+        console.log(request.body);
+        db.UserPermission.destroy({
+            where: {
+                UserId: request.body.userId
+            }
+        }).then(function () {
+            db.UserPermission.bulkCreate(request.body.permissions.map(function (permission) {
+                return {
+                    UserId: request.body.userId,
+                    PermissionId: permission
+                };
+            })).then(function (result) {
+                console.log(result);
+                response.end();
+            }).catch(function (err) {
+                logger.exception(err);
+                logger.sendError(response);
             });
         }).catch(function (err) {
             logger.exception(err);

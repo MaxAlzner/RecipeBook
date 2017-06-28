@@ -179,9 +179,19 @@ const _ext = {
         return new Promise(function (resolve, reject) {
             db.Unit.findAll({
                 order: ['Name']
-            }).then(function (units) {
-                units = units.map((node) => node.dataValues);
-                resolve(units);
+            }).then(function (result) {
+                resolve(result.map(node => node.dataValues));
+            }).catch(function (err) {
+                logger.exception(err);
+                reject();
+            });
+        });
+    },
+
+    getPermissions: function () {
+        return new Promise(function (resolve, reject) {
+            db.Permission.findAll().then(function (result) {
+                resolve(result.map(node => node.dataValues));
             }).catch(function (err) {
                 logger.exception(err);
                 reject();

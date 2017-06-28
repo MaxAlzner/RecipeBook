@@ -1,0 +1,36 @@
+<div id="EditUserPermissionModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="EditUserPermissionModalLabel">
+    <div class="modal-dialog" role="document">
+        <form id="edituser" class="modal-content" action="/admin/userpermission" method="post" novalidate="novalidate">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span class="glyphicon glyphicon-remove"></span></button>
+                <h4 class="modal-title" id="EditUserPermissionModalLabel">Edit User</h4>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" id="edituser-userid" name="userId" />
+                {{for #data}}
+                <div class="form-group">
+                    <div class="input-group">
+                        <label for="edituser-permission-{{:PermissionId}}" class="input-group-addon">
+                            <input type="checkbox" id="edituser-permission-{{:PermissionId}}" class="edituser-permission" name="permissions[]" value="{{:PermissionId}}" />
+                        </label>
+                        <label for="edituser-permission-{{:PermissionId}}" class="form-control">{{:Name}}</label>
+                    </div>
+                </div>
+                {{/for}}
+                <div id="EditUserPermissionSaveFailure" class="alert alert-danger" role="alert">
+                    Failed to save user.
+                </div>
+            </div>
+            <div class="modal-footer">
+                <div class="btn-group">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">
+                        <span class="glyphicon glyphicon-remove"></span>
+                    </button>
+                    <button type="submit" class="btn btn-success">
+                        <span class="glyphicon glyphicon-ok"></span>
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
