@@ -96,7 +96,7 @@ module.exports = function (app) {
             where: {
                 EmailAddress: request.body.email
             },
-            include: [db.Password]
+            include: [db.Password, db.Permission]
         }).then(function (result) {
             if (result !== null) {
                 var user = result.dataValues;
@@ -114,7 +114,8 @@ module.exports = function (app) {
                     request.session.user = {
                         UserId: user.UserId,
                         Name: user.Name,
-                        EmailAddress: user.EmailAddress
+                        EmailAddress: user.EmailAddress,
+                        Permissions: user.Permissions.map(node => node.dataValues.Name)
                     };
                     response.redirect('/');
                 }
@@ -189,7 +190,8 @@ module.exports = function (app) {
                     request.session.user = {
                         UserId: user.UserId,
                         Name: user.Name,
-                        EmailAddress: user.EmailAddress
+                        EmailAddress: user.EmailAddress,
+                        Permissions: []
                     };
                     response.redirect('/');
                 }).catch(function (err) {
@@ -238,7 +240,8 @@ module.exports = function (app) {
             request.session.user = {
                 UserId: request.body.userId,
                 Name: request.body.name,
-                EmailAddress: request.body.email
+                EmailAddress: request.body.email,
+                Permissions: request.session.user.Permissions
             };
             response.end();
         }).catch(function (err) {
@@ -273,6 +276,51 @@ module.exports = function (app) {
                     logger.sendError(response);
                 });
             }
+        }).catch(function (err) {
+            logger.exception(err);
+            logger.sendError(response);
+        });
+    });
+    
+    app.get('/admin', function(request, response) {
+        logger.request(request);
+        if (!request.session.user) {
+            response.redirect('/login');
+            return;
+        }
+
+        router.render(response, 'admin.html', {
+            User: request.session.user
+        });
+    });
+
+    app.post('/admin/users', function(request, response) {
+        console.log(request.body);
+        logger.request(request);
+        if (!request.session.user) {
+            response.redirect('/login');
+            return;
+        }
+
+        var params = {
+            attributes: request.body.columns.map(column => column.data).filter(column => !!column)
+        };
+        if (request.body.order.length > 0) {
+            var order = request.body.order[0];
+            params.order = [[request.body.columns[order.column].data, order.dir]];
+        }
+
+        var start = parseInt(request.body.start, 10) || 0;
+        var end = (parseInt(request.body.length, 10) || 0) + start;
+        db.User.findAll(params).then(function (result) {
+            var users = result.map(node => node.dataValues);
+            var filtered = users.slice(start, end);
+            response.json({
+                draw: request.body.draw,
+                recordsTotal: users.length,
+                recordsFiltered: filtered.length,
+                data: filtered
+            });
         }).catch(function (err) {
             logger.exception(err);
             logger.sendError(response);

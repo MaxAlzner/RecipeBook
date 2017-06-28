@@ -56,6 +56,33 @@ const db = {
         Salt: Sequelize.STRING,
         CreatedAt: Sequelize.DATE
     }),
+    Permission: connection.define('Permission', {
+        PermissionId: {
+            type: Sequelize.INTEGER,
+            primaryKey: true
+        },
+        Name: Sequelize.STRING,
+        Description: Sequelize.STRING
+    }),
+    UserPermission: connection.define('UserPermission', {
+        UserId: {
+            type: Sequelize.INTEGER,
+            primaryKey: true,
+            references: {
+                model: 'User',
+                key: 'UserId'
+            }
+        },
+        PermissionId: {
+            type: Sequelize.INTEGER,
+            primaryKey: true,
+            references: {
+                model: 'Permission',
+                key: 'PermissionId'
+            }
+        }
+    }),
+    
     Unit: connection.define('Unit', {
         Code: {
             type: Sequelize.STRING,
@@ -129,6 +156,9 @@ const db = {
 
 db.User.hasMany(db.Password, { foreignKey: 'UserId' });
 db.Password.hasOne(db.User, { foreignKey: 'UserId' });
+db.User.belongsToMany(db.Permission, { foreignKey: 'UserId', through: db.UserPermission });
+db.Permission.belongsToMany(db.User, { foreignKey: 'PermissionId', through: db.UserPermission });
+
 // db.Recipe.hasOne(db.User, { foreignKey: 'CreatedBy', targetKey: 'UserId' });
 db.Recipe.hasMany(db.Ingredient, { foreignKey: 'RecipeId' });
 db.Recipe.hasMany(db.Direction, { foreignKey: 'RecipeId' });

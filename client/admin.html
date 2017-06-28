@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recipe Book</title>
+    {{styleBundle
+        "css/bootstrap.css"
+        "css/bootstrap-theme.css"
+        "css/dataTables.bootstrap.css"
+        "css/site.css"
+    /}}
+</head>
+<body>
+    <div id="content" class="container">
+        {{partial "header.html" User /}}
+        <div class="page-header">
+        </div>
+        <table id="users" class="table table-striped"></table>
+    </div>
+    <div id="scripts" hidden>
+        {{template "templates/recipeview.html" "RecipeViewTemplate" /}}
+        {{scriptBundle
+            "js/jquery-3.2.1.js"
+            "js/bootstrap.js"
+            "js/jquery.validate.js"
+            "js/jquery.breakpoint.js"
+            "js/jsrender.js"
+            "js/fraction.js"
+            "js/jquery.dataTables.js"
+            "js/dataTables.bootstrap.js"
+            "js/site.js"
+            "js/admin.js"
+        /}}
+    </div>
+</body>
+</html>

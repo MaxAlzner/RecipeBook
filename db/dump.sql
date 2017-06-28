@@ -5,6 +5,12 @@ INSERT INTO User(UserId, `Name`, EmailAddress, CreatedAt)
 VALUES
     (1, 'System', 'admin@recipebook.com', NOW());
 
+INSERT INTO Permission(`Name`, Description)
+VALUES
+    ('Write', 'Can add new recipes and edit existing recipes.'),
+    ('Delete', 'Can delete recipes.'),
+    ('Admin', 'Can view the admin page and edit other users.');
+
 INSERT INTO Unit(`Code`, `Name`, ShortName)
 VALUES
 	('EA', 'Each', 'Each'),

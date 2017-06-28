@@ -8,6 +8,13 @@
         <div class="navbar-right">
             <ul class="nav navbar-nav">
                 {{if !!#data}}
+                {{if #data.Permissions.indexOf('Admin') >= 0}}
+                <li>
+                    <a href="/admin">
+                        Admin
+                    </a>
+                </li>
+                {{/if}}
                 <li>
                     <a href="/account">
                         <span class="glyphicon glyphicon-user"></span>&nbsp;Account

@@ -3,7 +3,9 @@ CREATE DATABASE IF NOT EXISTS `RecipeBook` /*!40100 DEFAULT CHARACTER SET utf8 *
 USE `RecipeBook`;
 
 DROP TABLE IF EXISTS Password;
+DROP TABLE IF EXISTS Permission;
 DROP TABLE IF EXISTS User;
+DROP TABLE IF EXISTS UserPermission;
 
 CREATE TABLE User
 (
@@ -31,6 +33,25 @@ CREATE TABLE Password
     CONSTRAINT FK_Password_User FOREIGN KEY (UserId) REFERENCES User(UserId) ON DELETE CASCADE
 );
 
+CREATE TABLE Permission
+(
+    PermissionId INT NOT NULL AUTO_INCREMENT,
+    `Name` VARCHAR(256) NOT NULL,
+    Description VARCHAR(1024) NOT NULL,
+    
+    CONSTRAINT PK_Permission PRIMARY KEY (PermissionId)
+);
+
+CREATE TABLE UserPermission
+(
+    UserId INT NOT NULL,
+    PermissionId INT NOT NULL,
+    
+    CONSTRAINT PK_UserPermission PRIMARY KEY (UserId, PermissionId),
+    CONSTRAINT FK_UserPermission_User FOREIGN KEY (UserId) REFERENCES User(UserId) ON DELETE CASCADE,
+    CONSTRAINT FK_UserPermission_Permission FOREIGN KEY (PermissionId) REFERENCES Permission(PermissionId) ON DELETE CASCADE
+);
+
 DROP TABLE IF EXISTS Ingredient;
 DROP TABLE IF EXISTS Direction;
 DROP TABLE IF EXISTS Recipe;
@@ -38,11 +59,11 @@ DROP TABLE IF EXISTS Unit;
 
 CREATE TABLE Unit
 (
-	`Code` VARCHAR(4) NOT NULL,
+	UnitCode VARCHAR(4) NOT NULL,
 	`Name` VARCHAR(64) NOT NULL,
     ShortName VARCHAR(32) NOT NULL,
     
-    CONSTRAINT PK_Code PRIMARY KEY(`Code`)
+    CONSTRAINT PK_UnitCode PRIMARY KEY(UnitCode)
 );
 
 CREATE TABLE Recipe
@@ -80,7 +101,7 @@ CREATE TABLE Ingredient
     
     CONSTRAINT PK_Ingredient PRIMARY KEY (IngredientId),
     CONSTRAINT FK_Ingredient_Recipe FOREIGN KEY (RecipeId) REFERENCES Recipe(RecipeId) ON DELETE CASCADE,
-    CONSTRAINT FK_Ingredient_Unit FOREIGN KEY (UnitCode) REFERENCES Unit(`Code`)
+    CONSTRAINT FK_Ingredient_Unit FOREIGN KEY (UnitCode) REFERENCES Unit(UnitCode)
 );
 
 CREATE TABLE Direction
