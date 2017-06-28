@@ -11,6 +11,10 @@ const logger = {
         console.log('ERROR', err);
     },
 
+    sendForbidden: function (response) {
+        response.status(403).sendFile(path.join(__dirname, 'error/403.html'));
+    },
+
     sendNotFound: function (response) {
         response.status(404).sendFile(path.join(__dirname, 'error/404.html'));
     },

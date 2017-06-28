@@ -60,6 +60,12 @@
             return (val || '').replace(/\n/g, '<br />');
         }
     });
+    $.views.helpers({
+        hasPermission: function (name) {
+            var permissions = JSON.parse($('#permissions').val() || '[]');
+            return !!permissions && !!permissions.find(function (permission) { return permission === name; });
+        }
+    });
 
     $.breakpoint({
         condition: function () {

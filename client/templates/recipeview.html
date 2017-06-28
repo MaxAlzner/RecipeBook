@@ -33,7 +33,7 @@
                                 <div id="recipes-images-{{:RecipeId}}" class="row">
                                     {{for Images ~info=DataInfo ~RecipeId=RecipeId ~UniqueId=UniqueId ~viewonly=~viewonly}}
                                     <div class="col-md-3 col-sm-4 col-xs-6" style="width: auto;">
-                                        {{if !~viewonly}}
+                                        {{if ~hasPermission('Write') && !~viewonly}}
                                         <button type="submit" class="btn btn-danger btn-xs recipe-photo-delete" formaction="/photo/{{:~UniqueId}}/{{:#data}}" style="position: absolute; top: 3px; right: 5px; border-radius: 12px;">
                                             <span class="glyphicon glyphicon-remove"></span>
                                         </button>
@@ -71,7 +71,7 @@
                             {{/for}}
                         </ol>
                         <p>{{html Notes /}}</p>
-                        {{if !~viewonly}}
+                        {{if ~hasPermission('Write') && !~viewonly}}
                         <div class="btn-group btn-group-sm">
                             <button type="button" class="btn btn-primary" title="Revise recipe"
                                 onclick="$('#EditRecipeModal').trigger('editrecipe.load', Recipes.Find(parseInt($(this).closest('[data-recipe]').attr('data-recipe'), 10))).modal('show')">

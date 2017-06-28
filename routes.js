@@ -289,6 +289,11 @@ module.exports = function (app) {
             return;
         }
 
+        if (!request.session.user.Permissions.find(permission => permission === 'Admin')) {
+            logger.sendForbidden(response);
+            return;
+        }
+
         schema.getPermissions().then(function (permissions) {
             router.render(response, 'admin.html', {
                 User: request.session.user,
@@ -303,6 +308,11 @@ module.exports = function (app) {
         logger.request(request);
         if (!request.session.user) {
             response.redirect('/login');
+            return;
+        }
+
+        if (!request.session.user.Permissions.find(permission => permission === 'Admin')) {
+            logger.sendForbidden(response);
             return;
         }
 
@@ -339,6 +349,11 @@ module.exports = function (app) {
         logger.request(request);
         if (!request.session.user) {
             response.redirect('/login');
+            return;
+        }
+
+        if (!request.session.user.Permissions.find(permission => permission === 'Admin')) {
+            logger.sendForbidden(response);
             return;
         }
 
@@ -419,6 +434,11 @@ module.exports = function (app) {
             response.status(500).send('Recipe ID is not valid.').end();
         }
 
+        if (!request.session.user || !request.session.user.Permissions.find(permission => permission === 'Delete')) {
+            logger.sendForbidden(response);
+            return;
+        }
+
         db.Recipe.destroy({
             where: {
                 RecipeId: id
@@ -440,6 +460,11 @@ module.exports = function (app) {
 
         if (!recipe.Name) {
             response.status(500).send('Recipe name is a required field.').end();
+        }
+
+        if (!request.session.user || !request.session.user.Permissions.find(permission => permission === 'Write')) {
+            logger.sendForbidden(response);
+            return;
         }
 
         if (!recipe.UniqueId) {
@@ -553,6 +578,11 @@ module.exports = function (app) {
             response.status(500).send('Image name is required.').end();
         }
 
+        if (!request.session.user || !request.session.user.Permissions.find(permission => permission === 'Write')) {
+            logger.sendForbidden(response);
+            return;
+        }
+
         var file = path.join(__dirname, 'data', request.params.uid, request.params.image);
         if (fs.existsSync(file)) {
             fs.unlink(file, function (err) {
@@ -572,6 +602,11 @@ module.exports = function (app) {
         logger.request(request);
         if (!request.params.uid) {
             response.status(500).send('Recipe unique ID is required.').end();
+        }
+
+        if (!request.session.user || !request.session.user.Permissions.find(permission => permission === 'Write')) {
+            logger.sendForbidden(response);
+            return;
         }
 
         var folder = path.join(__dirname, 'data', request.params.uid);
@@ -609,6 +644,11 @@ module.exports = function (app) {
         logger.request(request);
         if (!request.params.uid) {
             response.status(500).send('Recipe unique ID is required.').end();
+        }
+
+        if (!request.session.user || !request.session.user.Permissions.find(permission => permission === 'Write')) {
+            logger.sendForbidden(response);
+            return;
         }
 
         var folder = path.join(__dirname, 'data', request.params.uid);

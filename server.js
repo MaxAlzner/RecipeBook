@@ -54,6 +54,9 @@ jsrender.views.tags({
     }
 });
 jsrender.views.helpers({
+    hasPermission: function (user, name) {
+        return !!user && !!user.Permissions && !!user.Permissions.find(permission => permission === name);
+    }
 });
 
 const app = express();

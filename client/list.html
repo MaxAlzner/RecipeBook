@@ -15,6 +15,7 @@
         {{partial "header.html" User /}}
         <div class="page-header">
         </div>
+        {{if ~hasPermission(User, 'Write')}}
         <div id="controls" class="form-group">
             <div class="btn-group btn-group-sm">
                 <button type="button" class="btn btn-success" title="Add new recipe" onclick="$('#EditRecipeModal').trigger('editrecipe.load', {}).modal('show')">
@@ -22,6 +23,7 @@
                 </button>
             </div>
         </div>
+        {{/if}}
         <div id="recipelist">
         </div>
     </div>
@@ -56,10 +58,13 @@
             <li><a href="#" data-char="Z">Z</a></li>
         </ul>
     </div>
+    {{if ~hasPermission(User, 'Write')}}
     {{partial "modals/EditRecipeModal.html" /}}
     {{partial "modals/UploadImageModal.html" /}}
+    {{/if}}
     {{partial "modals/ViewImageModal.html" /}}
     <div id="scripts" hidden>
+        <input type="hidden" id="permissions" value="{{json User.Permissions onerror='[]' /}}" />
         <input type="hidden" id="recipes" value="{{json Recipes /}}" />
         <input type="hidden" id="units" value="{{json Units /}}" />
         {{template "templates/recipeview.html" "RecipeViewTemplate" /}}
