@@ -24,7 +24,8 @@ const connection = new Sequelize(dbconfig.database, dbconfig.user, dbconfig.pass
     define: {
         freezeTableName: true,
         timestamps: false
-    }
+    },
+    logging: dbconfig.logging
 });
 
 const db = {

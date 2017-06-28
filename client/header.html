@@ -5,20 +5,29 @@
                 Recipe Book
             </a>
         </div>
-        <div class="navbar-form navbar-right">
-            <div class="form-group">
-                <div class="btn-group">
-                    {{if !!#data}}
-                    <a href="/logout" class="btn btn-link">
+        <div class="navbar-right">
+            <ul class="nav navbar-nav">
+                {{if !!#data}}
+                <li>
+                    <a href="/account">
+                        <span class="glyphicon glyphicon-user"></span>&nbsp;Account
+                    </a>
+                </li>
+                {{/if}}
+                {{if !!#data}}
+                <li>
+                    <a href="/logout">
                         <span class="glyphicon glyphicon-log-out"></span>&nbsp;Log out
                     </a>
-                    {{else}}
-                    <a href="/login" class="btn btn-link">
+                </li>
+                {{else}}
+                <li>
+                    <a href="/login">
                         <span class="glyphicon glyphicon-log-in"></span>&nbsp;Log in
                     </a>
-                    {{/if}}
-                </div>
-            </div>
+                </li>
+                {{/if}}
+            </ul>
         </div>
     </div>
 </nav>

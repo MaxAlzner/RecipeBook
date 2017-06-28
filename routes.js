@@ -62,7 +62,6 @@ module.exports = function (app) {
 
     app.get('/', function (request, response) {
         logger.request(request);
-        console.log(request.session);
         schema.getUnits().then(function (units) {
             schema.getRecipes().then(function (recipes) {
                 router.render(response, 'list.html', {
@@ -80,7 +79,6 @@ module.exports = function (app) {
 
     app.get('/login', function(request, response) {
         logger.request(request);
-        console.log(request.session);
         router.render(response, 'login.html', {
             User: request.session.user
         });
@@ -103,7 +101,7 @@ module.exports = function (app) {
             if (result !== null) {
                 var user = result.dataValues;
                 user.Passwords = user.Passwords.map(node => node.dataValues);
-                var password = user.Passwords.sort((a, b) => (new Date(a.CreatedAt)) - (new Date(b.CreatedAt)))[0];
+                var password = user.Passwords.sort((a, b) => (new Date(b.CreatedAt)) - (new Date(a.CreatedAt)))[0];
                 if (bcrypt.hashSync(request.body.password, password.Salt) === password.Hash) {
                     db.User.update({
                         LastLogIn: schema.now()
@@ -203,6 +201,76 @@ module.exports = function (app) {
                 router.render(response, 'register.html', {
                     User: request.session.user,
                     Message: 'User with that name already exists.'
+                });
+            }
+        }).catch(function (err) {
+            logger.exception(err);
+            logger.sendError(response);
+        });
+    });
+
+    app.get('/account', function(request, response) {
+        logger.request(request);
+        if (!request.session.user) {
+            response.redirect('/login');
+            return;
+        }
+
+        router.render(response, 'account.html', {
+            User: request.session.user
+        });
+    });
+
+    app.post('/account/updateaccount', function(request, response) {
+        logger.request(request);
+        if (!request.session.user) {
+            response.redirect('/login');
+            return;
+        }
+
+        db.User.update({
+            Name: request.body.name,
+            EmailAddress: request.body.email,
+            LastUpdated: schema.now()
+        }, {
+            where: { UserId: request.body.userId }
+        }).then(function () {
+            request.session.user = {
+                UserId: request.body.userId,
+                Name: request.body.name,
+                EmailAddress: request.body.email
+            };
+            response.end();
+        }).catch(function (err) {
+            logger.exception(err);
+        });
+    });
+
+    app.post('/account/changepassword', function(request, response) {
+        logger.request(request);
+        if (!request.session.user) {
+            response.redirect('/login');
+            return;
+        }
+
+        db.Password.findOne({
+            where: {
+                UserId: request.body.userId
+            },
+            order: [['CreatedAt', 'DESC']]
+        }).then(function (result) {
+            var password = result.dataValues;
+            if (bcrypt.hashSync(request.body.oldpassword, password.Salt) === password.Hash) {
+                db.Password.create({
+                    UserId: request.body.userId,
+                    Hash: bcrypt.hashSync(request.body.newpassword, password.Salt),
+                    Salt: password.Salt,
+                    CreatedAt: schema.now()
+                }).then(function () {
+                    response.end();
+                }).catch(function (err) {
+                    logger.exception(err);
+                    logger.sendError(response);
                 });
             }
         }).catch(function (err) {

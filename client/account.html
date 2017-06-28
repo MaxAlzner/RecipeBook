@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recipe Book</title>
+    {{styleBundle
+        "css/bootstrap.css"
+        "css/bootstrap-theme.css"
+        "css/site.css"
+    /}}
+</head>
+<body>
+    <div id="content" class="container">
+        {{partial "header.html" User /}}
+        <div class="page-header">
+        </div>
+        <div class="row">
+            <div class="col-lg-6 col-lg-offset-3">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <div class="panel-title">Update Info</div>
+                    </div>
+                    <div class="panel-body">
+                        <form id="updateaccount" class="form-horizontal" action="account/updateaccount" method="post" novalidate="novalidate">
+                            <input type="hidden" name="userId" value="{{:User.UserId}}" />
+                            <div class="form-group">
+                                <label for="updateaccount-name" class="col-sm-3 control-label">Name</label>
+                                <div class="col-sm-9">
+                                    <input type="text" id="updateaccount-name" class="form-control" name="name" required="required" maxlength="128" minlength="2" value="{{:User.Name}}" />
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="updateaccount-email" class="col-sm-3 control-label">E-mail</label>
+                                <div class="col-sm-9">
+                                    <input type="email" id="updateaccount-email" class="form-control" name="email" required="required" maxlength="256" value="{{:User.EmailAddress}}" />
+                                </div>
+                            </div>
+                            <div id="UpdateAccountSaveFailure" class="alert alert-danger" role="alert" style="display: none;">
+                                Failed to save user info.
+                            </div>
+                            <div class="text-right">
+                                <div class="btn-group">
+                                    <button type="submit" class="btn btn-default">
+                                        Update
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <div class="panel-title">Change Password</div>
+                    </div>
+                    <div class="panel-body">
+                        <form id="changepassword" class="form-horizontal" action="account/changepassword" method="post" novalidate="novalidate">
+                            <input type="hidden" name="userId" value="{{:User.UserId}}" />
+                            <div class="form-group">
+                                <label for="changepassword-oldpassword" class="col-sm-3 control-label">Current</label>
+                                <div class="col-sm-9">
+                                    <input type="password" id="changepassword-oldpassword" class="form-control" name="oldpassword" required="required" maxlength="256" minlength="4" />
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="changepassword-newpassword" class="col-sm-3 control-label">New</label>
+                                <div class="col-sm-9">
+                                    <input type="password" id="changepassword-newpassword" class="form-control" name="newpassword" required="required" maxlength="256" minlength="4" />
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="changepassword-newpassword2" class="col-sm-3 control-label"></label>
+                                <div class="col-sm-9">
+                                    <input type="password" id="changepassword-newpassword2" class="form-control" name="newpassword2" required="required" maxlength="256" minlength="4" />
+                                </div>
+                            </div>
+                            <div id="ChangePasswordSaveFailure" class="alert alert-danger" role="alert" style="display: none;">
+                                Failed to change password.
+                            </div>
+                            <div class="text-right">
+                                <div class="btn-group">
+                                    <button type="submit" class="btn btn-default">
+                                        Change
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="scripts" hidden>
+        {{template "templates/recipeview.html" "RecipeViewTemplate" /}}
+        {{scriptBundle
+            "js/jquery-3.2.1.js"
+            "js/bootstrap.js"
+            "js/jquery.validate.js"
+            "js/jquery.breakpoint.js"
+            "js/jsrender.js"
+            "js/fraction.js"
+            "js/site.js"
+            "js/account.js"
+        /}}
+    </div>
+</body>
+</html>
