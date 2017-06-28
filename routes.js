@@ -392,10 +392,15 @@ module.exports = function (app) {
             response.status(500).send('Recipe ID is not valid.').end();
         }
 
-        schema.getRecipe(id).then(function (data) {
-            router.render(response, 'view.html', {
-                User: request.session.user,
-                Recipe: data
+        schema.getUnits().then(function (units) {
+            schema.getRecipe(id).then(function (data) {
+                router.render(response, 'view.html', {
+                    User: request.session.user,
+                    Recipe: data,
+                    Units: units
+                });
+            }).catch(function () {
+                logger.sendError(response);
             });
         }).catch(function () {
             logger.sendError(response);
