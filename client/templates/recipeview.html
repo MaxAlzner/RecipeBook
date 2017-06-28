@@ -1,5 +1,5 @@
 <div class="panel-group" role="tablist" aria-multiselectable="true">
-    {{props #data.Recipes ~viewonly=#data._viewonly}}
+    {{props #data.Recipes}}
     <div class="panel panel-default" data-group="{{:key}}">
         <div class="panel-body">
             {{if prop.length > 1}}
@@ -10,7 +10,7 @@
             </ul>
             {{/if}}
             <div class="tab-content">
-                {{for prop ~length=prop.length ~viewonly=~viewonly}}
+                {{for prop ~length=prop.length}}
                 <div role="tabpanel" class="tab-pane {{if #index === (~length - 1)}}active{{/if}}" id="recipe-collapse-{{:RecipeId}}">
                     <div class="recipe" data-recipe="{{:RecipeId}}" data-name="{{:Name}}">
                         <h3><a href="/recipe/{{:RecipeId}}">{{:Name}}</a></h3>
@@ -31,9 +31,9 @@
                             </div>
                             <div class="media-body">
                                 <div id="recipes-images-{{:RecipeId}}" class="row">
-                                    {{for Images ~info=DataInfo ~RecipeId=RecipeId ~UniqueId=UniqueId ~viewonly=~viewonly}}
+                                    {{for Images ~info=DataInfo ~RecipeId=RecipeId ~UniqueId=UniqueId}}
                                     <div class="col-md-3 col-sm-4 col-xs-6" style="width: auto;">
-                                        {{if ~hasPermission('Write') && !~viewonly}}
+                                        {{if ~hasPermission('Write')}}
                                         <button type="submit" class="btn btn-danger btn-xs recipe-photo-delete" formaction="/photo/{{:~UniqueId}}/{{:#data}}" style="position: absolute; top: 3px; right: 5px; border-radius: 12px;">
                                             <span class="glyphicon glyphicon-remove"></span>
                                         </button>
@@ -71,7 +71,7 @@
                             {{/for}}
                         </ol>
                         <p>{{html Notes /}}</p>
-                        {{if ~hasPermission('Write') && !~viewonly}}
+                        {{if ~hasPermission('Write')}}
                         <div class="btn-group btn-group-sm">
                             <button type="button" class="btn btn-primary" title="Revise recipe"
                                 onclick="$('#EditRecipeModal').trigger('editrecipe.load', Recipes.Find(parseInt($(this).closest('[data-recipe]').attr('data-recipe'), 10))).modal('show')">
