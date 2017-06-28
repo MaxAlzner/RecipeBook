@@ -12,6 +12,7 @@ if (!dbconfig) {
 }
 
 const Sequelize = require('sequelize');
+const NodeCache = require('node-cache');
 
 const connection = new Sequelize(dbconfig.database, dbconfig.user, dbconfig.password, {
     host: dbconfig.host,
@@ -167,9 +168,15 @@ db.Ingredient.hasOne(db.Recipe, { foreignKey: 'RecipeId' });
 db.Direction.hasOne(db.Recipe, { foreignKey: 'RecipeId' });
 db.Unit.hasMany(db.Ingredient, { foreignKey: 'UnitCode' });
 
+const cache = new NodeCache({
+    stdTTL: 600
+});
+
 const _ext = {
     connection: connection,
     model: db,
+    
+    cache: cache,
     
     now: function () {
         return (new Date()).toISOString().slice(0, 19).replace('T', ' ');
@@ -177,34 +184,45 @@ const _ext = {
     
     getUnits: function () {
         return new Promise(function (resolve, reject) {
-            db.Unit.findAll({
-                order: ['Name']
-            }).then(function (result) {
-                resolve(result.map(node => node.dataValues));
-            }).catch(function (err) {
-                logger.exception(err);
-                reject();
-            });
+            if (!cache.get('Units')) {
+                db.Unit.findAll({
+                    order: ['Name']
+                }).then(function (result) {
+                    var units = result.map(node => node.dataValues);
+                    cache.set('Units', units);
+                    resolve(units);
+                }).catch(function (err) {
+                    logger.exception(err);
+                    reject();
+                });
+            }
+            else {
+                resolve(cache.get('Units'));
+            }
         });
     },
 
     getPermissions: function () {
         return new Promise(function (resolve, reject) {
-            db.Permission.findAll().then(function (result) {
-                resolve(result.map(node => node.dataValues));
-            }).catch(function (err) {
-                logger.exception(err);
-                reject();
-            });
+            if (!cache.get('Permissions')) {
+                db.Permission.findAll().then(function (result) {
+                    var permissions = result.map(node => node.dataValues);
+                    cache.set('Permissions', permissions);
+                    resolve(permissions);
+                }).catch(function (err) {
+                    logger.exception(err);
+                    reject();
+                });
+            }
+            else {
+                resolve(cache.get('Permissions'));
+            }
         });
     },
 
     getRecipe: function (id) {
         return new Promise(function (resolve, reject) {
-            db.Unit.findAll({
-                order: ['Name']
-            }).then(function (units) {
-                units = units.map((node) => node.dataValues);
+            _ext.getUnits().then(function (units) {
                 db.Recipe.findOne({
                     where: {
                         RecipeId: id   
@@ -256,8 +274,7 @@ const _ext = {
                     logger.exception(err);
                     reject();
                 });
-            }).catch(function (err) {
-                logger.exception(err);
+            }).catch(function () {
                 reject();
             });
         });
@@ -316,8 +333,7 @@ const _ext = {
                     }
                     
                     resolve(recipes);
-                }).catch(function (err) {
-                    logger.exception(err);
+                }).catch(function () {
                     reject();
                 });
             });
